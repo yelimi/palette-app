@@ -20,7 +20,9 @@ class Product(Base):
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True)
     name: Mapped[str] = mapped_column(String(200), nullable=False)
-    category: Mapped[str] = mapped_column(String(100), nullable=False)
+    gender: Mapped[str] = mapped_column(String(10), nullable=False)       # 남성 / 여성 / 공용
+    category: Mapped[str] = mapped_column(String(100), nullable=False)    # 상의 / 아우터 / 바지 / 원피스·스커트
+    subcategory: Mapped[str] = mapped_column(String(100), nullable=False) # 긴소매 티셔츠 / 카디건 등
     color_name: Mapped[str] = mapped_column(String(100), nullable=False)
     hex: Mapped[str] = mapped_column(String(7), nullable=False)
     price: Mapped[int] = mapped_column(Integer, nullable=False)

@@ -50,9 +50,9 @@ def seed_products(test_engine):
     db = Session()
     if db.query(models.Product).count() == 0:
         products = [
-            models.Product(name="네이비 코튼 셔츠", category="상의", color_name="네이비", hex="#26354A", price=49000),
-            models.Product(name="크림 니트 카디건", category="아우터", color_name="크림", hex="#EEE5D3", price=69000),
-            models.Product(name="차콜 슬랙스", category="하의", color_name="차콜", hex="#44474D", price=64000),
+            models.Product(name="네이비 코튼 셔츠", gender="남성", category="상의", subcategory="셔츠/블라우스", color_name="네이비", hex="#26354A", price=49000),
+            models.Product(name="크림 니트 카디건", gender="여성", category="아우터", subcategory="카디건", color_name="크림", hex="#EEE5D3", price=69000),
+            models.Product(name="차콜 슬랙스", gender="남성", category="바지", subcategory="슈트 팬츠/슬랙스", color_name="차콜", hex="#44474D", price=64000),
         ]
         db.add_all(products)
         db.commit()

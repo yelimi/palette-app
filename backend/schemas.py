@@ -27,7 +27,9 @@ class TokenResponse(BaseModel):
 class ProductResponse(BaseModel):
     id: int
     name: str
+    gender: str
     category: str
+    subcategory: str
     color_name: str
     hex: str
     price: int
