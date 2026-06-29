@@ -36,6 +36,14 @@ class ProductResponse(BaseModel):
     model_config = {"from_attributes": True}
 
 
+class ProductListResponse(BaseModel):
+    total: int
+    page: int
+    limit: int
+    total_pages: int
+    items: list[ProductResponse]
+
+
 class CartItemCreate(BaseModel):
     product_id: int
 
