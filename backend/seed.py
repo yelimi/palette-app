@@ -86,7 +86,7 @@ PRODUCTS = [
     {"gender": "남성", "category": "아우터", "subcategory": "무스탕/퍼", "name": "브라운 무스탕 재킷", "color_name": "브라운", "hex": "#8B5E3C", "price": 259000},
     {"gender": "남성", "category": "아우터", "subcategory": "겨울 싱글 코트", "name": "차콜 울 싱글 코트", "color_name": "차콜", "hex": "#44474D", "price": 219000},
     {"gender": "남성", "category": "아우터", "subcategory": "겨울 더블 코트", "name": "베이지 캐시미어 더블 코트", "color_name": "베이지", "hex": "#D4B896", "price": 289000},
-    {"gender": "남성", "category": "아우터", "subcategory": "겨울 기타코트", "name": "그레이 발마칸 코트", "color_name": "그레이", "hex": "#909090", "price": 199000},
+    {"gender": "남성", "category": "아우터", "subcategory": "겨울 기타 코트", "name": "그레이 발마칸 코트", "color_name": "그레이", "hex": "#909090", "price": 199000},
     {"gender": "남성", "category": "아우터", "subcategory": "숏패딩", "name": "블랙 구스 다운 숏패딩", "color_name": "블랙", "hex": "#1C1C1C", "price": 159000},
     {"gender": "남성", "category": "아우터", "subcategory": "롱패딩", "name": "네이비 롱패딩", "color_name": "네이비", "hex": "#1B2B4B", "price": 239000},
     {"gender": "남성", "category": "아우터", "subcategory": "기타 아우터", "name": "올리브 워크 재킷", "color_name": "올리브", "hex": "#6B7645", "price": 98000},
@@ -111,7 +111,7 @@ PRODUCTS = [
     {"gender": "여성", "category": "아우터", "subcategory": "무스탕/퍼", "name": "브라운 무스탕 코트", "color_name": "브라운", "hex": "#8B5E3C", "price": 289000},
     {"gender": "여성", "category": "아우터", "subcategory": "겨울 싱글 코트", "name": "라이트 그레이 울 싱글 코트", "color_name": "라이트 그레이", "hex": "#C8C8C8", "price": 219000},
     {"gender": "여성", "category": "아우터", "subcategory": "겨울 더블 코트", "name": "베이지 더블 코트", "color_name": "베이지", "hex": "#D4B896", "price": 259000},
-    {"gender": "여성", "category": "아우터", "subcategory": "겨울 기타코트", "name": "블랙 케이프 코트", "color_name": "블랙", "hex": "#1C1C1C", "price": 199000},
+    {"gender": "여성", "category": "아우터", "subcategory": "겨울 기타 코트", "name": "블랙 케이프 코트", "color_name": "블랙", "hex": "#1C1C1C", "price": 199000},
     {"gender": "여성", "category": "아우터", "subcategory": "숏패딩", "name": "와인 숏패딩", "color_name": "와인", "hex": "#722F37", "price": 159000},
     {"gender": "여성", "category": "아우터", "subcategory": "롱패딩", "name": "네이비 롱패딩", "color_name": "네이비", "hex": "#1B2B4B", "price": 249000},
     {"gender": "여성", "category": "아우터", "subcategory": "기타 아우터", "name": "라벤더 볼레로 재킷", "color_name": "라벤더", "hex": "#B8A9C9", "price": 79000},
@@ -152,26 +152,26 @@ PRODUCTS = [
     {"gender": "여성", "category": "바지", "subcategory": "기타 하의", "name": "머스타드 와이드 팬츠", "color_name": "머스타드", "hex": "#C69B2B", "price": 68000},
 
     # ────────────────────────────────────────────
-    # 여성 원피스·스커트
+    # 여성 원피스/스커트
     # ────────────────────────────────────────────
     # 미니 원피스
-    {"gender": "여성", "category": "원피스·스커트", "subcategory": "미니 원피스", "name": "화이트 플레어 미니 원피스", "color_name": "화이트", "hex": "#F5F5F0", "price": 85000},
-    {"gender": "여성", "category": "원피스·스커트", "subcategory": "미니 원피스", "name": "핑크 플로럴 미니 원피스", "color_name": "핑크", "hex": "#E8A0B4", "price": 89000},
+    {"gender": "여성", "category": "원피스/스커트", "subcategory": "미니 원피스", "name": "화이트 플레어 미니 원피스", "color_name": "화이트", "hex": "#F5F5F0", "price": 85000},
+    {"gender": "여성", "category": "원피스/스커트", "subcategory": "미니 원피스", "name": "핑크 플로럴 미니 원피스", "color_name": "핑크", "hex": "#E8A0B4", "price": 89000},
     # 미디 원피스
-    {"gender": "여성", "category": "원피스·스커트", "subcategory": "미디 원피스", "name": "버건디 랩 미디 원피스", "color_name": "버건디", "hex": "#7B2D3B", "price": 109000},
-    {"gender": "여성", "category": "원피스·스커트", "subcategory": "미디 원피스", "name": "세이지 린넨 미디 원피스", "color_name": "세이지", "hex": "#9BAA91", "price": 115000},
+    {"gender": "여성", "category": "원피스/스커트", "subcategory": "미디 원피스", "name": "버건디 랩 미디 원피스", "color_name": "버건디", "hex": "#7B2D3B", "price": 109000},
+    {"gender": "여성", "category": "원피스/스커트", "subcategory": "미디 원피스", "name": "세이지 린넨 미디 원피스", "color_name": "세이지", "hex": "#9BAA91", "price": 115000},
     # 맥시 원피스
-    {"gender": "여성", "category": "원피스·스커트", "subcategory": "맥시 원피스", "name": "네이비 맥시 원피스", "color_name": "네이비", "hex": "#1B2B4B", "price": 129000},
-    {"gender": "여성", "category": "원피스·스커트", "subcategory": "맥시 원피스", "name": "크림 플로럴 맥시 원피스", "color_name": "크림", "hex": "#EEE5D3", "price": 135000},
+    {"gender": "여성", "category": "원피스/스커트", "subcategory": "맥시 원피스", "name": "네이비 맥시 원피스", "color_name": "네이비", "hex": "#1B2B4B", "price": 129000},
+    {"gender": "여성", "category": "원피스/스커트", "subcategory": "맥시 원피스", "name": "크림 플로럴 맥시 원피스", "color_name": "크림", "hex": "#EEE5D3", "price": 135000},
     # 미니 스커트
-    {"gender": "여성", "category": "원피스·스커트", "subcategory": "미니 스커트", "name": "블랙 미니 스커트", "color_name": "블랙", "hex": "#1C1C1C", "price": 55000},
-    {"gender": "여성", "category": "원피스·스커트", "subcategory": "미니 스커트", "name": "라벤더 체크 미니 스커트", "color_name": "라벤더", "hex": "#B8A9C9", "price": 62000},
+    {"gender": "여성", "category": "원피스/스커트", "subcategory": "미니 스커트", "name": "블랙 미니 스커트", "color_name": "블랙", "hex": "#1C1C1C", "price": 55000},
+    {"gender": "여성", "category": "원피스/스커트", "subcategory": "미니 스커트", "name": "라벤더 체크 미니 스커트", "color_name": "라벤더", "hex": "#B8A9C9", "price": 62000},
     # 미디 스커트
-    {"gender": "여성", "category": "원피스·스커트", "subcategory": "미디 스커트", "name": "카멜 A라인 미디 스커트", "color_name": "카멜", "hex": "#C19A6B", "price": 75000},
-    {"gender": "여성", "category": "원피스·스커트", "subcategory": "미디 스커트", "name": "머스타드 플리츠 미디 스커트", "color_name": "머스타드", "hex": "#C69B2B", "price": 72000},
+    {"gender": "여성", "category": "원피스/스커트", "subcategory": "미디 스커트", "name": "카멜 A라인 미디 스커트", "color_name": "카멜", "hex": "#C19A6B", "price": 75000},
+    {"gender": "여성", "category": "원피스/스커트", "subcategory": "미디 스커트", "name": "머스타드 플리츠 미디 스커트", "color_name": "머스타드", "hex": "#C69B2B", "price": 72000},
     # 롱스커트
-    {"gender": "여성", "category": "원피스·스커트", "subcategory": "롱스커트", "name": "블랙 맥시 롱스커트", "color_name": "블랙", "hex": "#1C1C1C", "price": 85000},
-    {"gender": "여성", "category": "원피스·스커트", "subcategory": "롱스커트", "name": "네이비 플로럴 롱스커트", "color_name": "네이비", "hex": "#1B2B4B", "price": 92000},
+    {"gender": "여성", "category": "원피스/스커트", "subcategory": "롱스커트", "name": "블랙 맥시 롱스커트", "color_name": "블랙", "hex": "#1C1C1C", "price": 85000},
+    {"gender": "여성", "category": "원피스/스커트", "subcategory": "롱스커트", "name": "네이비 플로럴 롱스커트", "color_name": "네이비", "hex": "#1B2B4B", "price": 92000},
 ]
 
 
