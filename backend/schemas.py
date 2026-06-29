@@ -44,6 +44,11 @@ class ProductListResponse(BaseModel):
     items: list[ProductResponse]
 
 
+class ColorRecommendation(BaseModel):
+    color_name: str
+    hex: str
+
+
 class CartItemCreate(BaseModel):
     product_id: int
 

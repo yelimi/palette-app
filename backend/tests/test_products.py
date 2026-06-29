@@ -99,3 +99,20 @@ def test_products_total_pages_calculation(client, auth_headers):
     data = response.json()
     expected_pages = (data["total"] + 1) // 2
     assert data["total_pages"] == expected_pages
+
+
+def test_get_product_by_id(client, auth_headers):
+    first = client.get("/products", headers=auth_headers).json()["items"][0]
+    response = client.get(f"/products/{first['id']}", headers=auth_headers)
+    assert response.status_code == 200
+    assert response.json()["id"] == first["id"]
+
+
+def test_get_product_by_id_not_found(client, auth_headers):
+    response = client.get("/products/999999", headers=auth_headers)
+    assert response.status_code == 404
+
+
+def test_get_product_by_id_requires_auth(client):
+    response = client.get("/products/1")
+    assert response.status_code == 403

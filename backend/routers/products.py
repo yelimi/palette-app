@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, Query
+from fastapi import APIRouter, Depends, Query, HTTPException
 from sqlalchemy.orm import Session
 from database import get_db
 from auth import get_current_user
@@ -48,3 +48,15 @@ def get_products(
         total_pages=(total + limit - 1) // limit,
         items=page_items,
     )
+
+
+@router.get("/{product_id}", response_model=schemas.ProductResponse)
+def get_product(
+    product_id: int,
+    db: Session = Depends(get_db),
+    _: models.User = Depends(get_current_user),
+):
+    product = db.query(models.Product).filter(models.Product.id == product_id).first()
+    if not product:
+        raise HTTPException(status_code=404, detail="상품을 찾을 수 없습니다.")
+    return product
