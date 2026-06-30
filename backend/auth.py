@@ -14,6 +14,13 @@ ACCESS_TOKEN_EXPIRE_MINUTES = 60 * 24
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 bearer_scheme = HTTPBearer()
 
+# 로그아웃된 토큰 보관 (서버 재시작 시 초기화됨)
+token_blacklist: set[str] = set()
+
+
+def blacklist_token(token: str) -> None:
+    token_blacklist.add(token)
+
 
 def hash_password(password: str) -> str:
     return pwd_context.hash(password)
@@ -34,6 +41,8 @@ def get_current_user(
     db: Session = Depends(get_db),
 ) -> models.User:
     token = credentials.credentials
+    if token in token_blacklist:
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="로그아웃된 토큰입니다.")
     try:
         payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
         user_id: int = payload.get("sub")

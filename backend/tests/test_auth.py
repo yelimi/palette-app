@@ -48,3 +48,37 @@ def test_login_nonexistent_user(client):
         "email": "nobody@example.com", "password": "pass"
     })
     assert response.status_code == 401
+
+
+def test_logout_success(client):
+    client.post("/auth/register", json={
+        "name": "로그아웃유저", "email": "logout@example.com", "password": "pass123"
+    })
+    token = client.post("/auth/login", json={
+        "email": "logout@example.com", "password": "pass123"
+    }).json()["access_token"]
+    headers = {"Authorization": f"Bearer {token}"}
+
+    response = client.post("/auth/logout", headers=headers)
+    assert response.status_code == 200
+
+
+def test_logout_requires_auth(client):
+    response = client.post("/auth/logout")
+    assert response.status_code == 403
+
+
+def test_token_invalid_after_logout(client):
+    client.post("/auth/register", json={
+        "name": "만료유저", "email": "expired@example.com", "password": "pass123"
+    })
+    token = client.post("/auth/login", json={
+        "email": "expired@example.com", "password": "pass123"
+    }).json()["access_token"]
+    headers = {"Authorization": f"Bearer {token}"}
+
+    client.post("/auth/logout", headers=headers)
+
+    # 로그아웃 후 같은 토큰으로 요청 → 401
+    response = client.get("/products", headers=headers)
+    assert response.status_code == 401
