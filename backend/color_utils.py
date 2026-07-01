@@ -1,4 +1,7 @@
 import math
+import io
+from collections import Counter
+from PIL import Image
 
 
 # 32가지 팔레트 (seed.py와 동일)
@@ -155,3 +158,20 @@ def recommend_colors(input_hex: str, top_n: int = 5) -> list:
 
     scores.sort(reverse=True)
     return [{"color_name": name, "hex": hx} for _, name, hx in scores[:top_n]]
+
+
+ALLOWED_CONTENT_TYPES = {"image/jpeg", "image/png", "image/webp"}
+MAX_IMAGE_SIZE = 10 * 1024 * 1024  # 10MB
+
+
+def extract_dominant_color(image_bytes: bytes) -> str:
+    """이미지에서 가장 지배적인 색상을 hex로 추출."""
+    img = Image.open(io.BytesIO(image_bytes)).convert("RGB")
+    img = img.resize((100, 100))
+
+    raw = img.tobytes()
+    pixels = [(raw[i], raw[i+1], raw[i+2]) for i in range(0, len(raw), 3)]
+    most_common_rgb = Counter(pixels).most_common(1)[0][0]
+
+    r, g, b = most_common_rgb
+    return f"#{r:02X}{g:02X}{b:02X}"

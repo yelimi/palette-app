@@ -59,6 +59,11 @@ class ColorRecommendation(BaseModel):
     hex: str
 
 
+class ColorExtractResponse(BaseModel):
+    extracted_color: str
+    recommendations: list[ColorRecommendation]
+
+
 class CartItemCreate(BaseModel):
     product_id: int
 
