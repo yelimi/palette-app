@@ -44,6 +44,16 @@ class ProductListResponse(BaseModel):
     items: list[ProductResponse]
 
 
+class PasswordChangeRequest(BaseModel):
+    current_password: str
+    new_password: str
+
+
+class PasswordResetRequest(BaseModel):
+    email: EmailStr
+    new_password: str
+
+
 class ColorRecommendation(BaseModel):
     color_name: str
     hex: str
