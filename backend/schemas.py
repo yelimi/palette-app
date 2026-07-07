@@ -18,6 +18,18 @@ class UserCreate(BaseModel):
             raise ValueError("이름은 한글 또는 영문만 입력 가능합니다")
         return v
 
+    @field_validator("email")
+    @classmethod
+    def validate_email_ascii(cls, v):
+        local_part = v.split("@")[0]
+        if not local_part.isascii():
+            raise ValueError("이메일은 영문, 숫자, 특수문자만 입력 가능합니다")
+        if len(local_part) > 64:
+            raise ValueError("이메일 로컬 파트는 64자를 초과할 수 없습니다")
+        if len(v) > 254:
+            raise ValueError("이메일은 254자를 초과할 수 없습니다")
+        return v
+
     @field_validator("password")
     @classmethod
     def validate_password(cls, v):
