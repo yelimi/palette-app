@@ -16,7 +16,7 @@ class UserCreate(BaseModel):
             raise ValueError("이름은 100자를 초과할 수 없습니다")
         if not re.match(r"^[가-힣a-zA-Z\s]+$", v):
             raise ValueError("이름은 한글 또는 영문만 입력 가능합니다")
-        return v
+        return v.strip()
 
     @field_validator("email")
     @classmethod
@@ -35,6 +35,8 @@ class UserCreate(BaseModel):
     def validate_password(cls, v):
         if not v or not v.strip():
             raise ValueError("비밀번호를 입력해주세요")
+        if v != v.strip():
+            raise ValueError("비밀번호 앞뒤에 공백을 포함할 수 없습니다")
         if len(v) < 8:
             raise ValueError("비밀번호는 8자 이상이어야 합니다")
         if len(v) > 255:
@@ -79,14 +81,36 @@ class ProductListResponse(BaseModel):
     items: list[ProductResponse]
 
 
+def validate_new_password(v: str) -> str:
+    if not v or not v.strip():
+        raise ValueError("비밀번호를 입력해주세요")
+    if v != v.strip():
+        raise ValueError("비밀번호 앞뒤에 공백을 포함할 수 없습니다")
+    if len(v) < 8:
+        raise ValueError("비밀번호는 8자 이상이어야 합니다")
+    if len(v) > 255:
+        raise ValueError("비밀번호는 255자를 초과할 수 없습니다")
+    return v
+
+
 class PasswordChangeRequest(BaseModel):
     current_password: str
     new_password: str
+
+    @field_validator("new_password")
+    @classmethod
+    def validate_new_pw(cls, v):
+        return validate_new_password(v)
 
 
 class PasswordResetRequest(BaseModel):
     email: EmailStr
     new_password: str
+
+    @field_validator("new_password")
+    @classmethod
+    def validate_new_pw(cls, v):
+        return validate_new_password(v)
 
 
 class ColorRecommendation(BaseModel):
