@@ -57,7 +57,12 @@ class LoginRequest(BaseModel):
 
     @field_validator("email")
     @classmethod
-    def lowercase_email(cls, v):
+    def validate_email(cls, v):
+        local_part = v.split("@")[0]
+        if len(local_part) > 64:
+            raise ValueError("이메일 로컬 파트는 64자를 초과할 수 없습니다")
+        if len(v) > 254:
+            raise ValueError("이메일은 254자를 초과할 수 없습니다")
         return v.lower()
 
     @field_validator("password")
