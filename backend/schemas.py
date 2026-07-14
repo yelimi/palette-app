@@ -60,6 +60,13 @@ class LoginRequest(BaseModel):
     def lowercase_email(cls, v):
         return v.lower()
 
+    @field_validator("password")
+    @classmethod
+    def validate_password(cls, v):
+        if len(v) > 255:
+            raise ValueError("비밀번호는 255자를 초과할 수 없습니다")
+        return v
+
 
 class TokenResponse(BaseModel):
     access_token: str
