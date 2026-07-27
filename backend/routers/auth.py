@@ -67,6 +67,8 @@ def change_password(
 ):
     if not auth_utils.verify_password(body.current_password, current_user.password_hash):
         raise HTTPException(status_code=401, detail="현재 비밀번호가 올바르지 않습니다.")
+    if auth_utils.verify_password(body.new_password, current_user.password_hash):
+        raise HTTPException(status_code=400, detail="새 비밀번호가 현재 비밀번호와 동일합니다.")
     current_user.password_hash = auth_utils.hash_password(body.new_password)
     db.commit()
     return {"message": "비밀번호가 변경되었습니다."}
