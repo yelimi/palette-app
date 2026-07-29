@@ -13,9 +13,9 @@ def make_image_bytes(color=(200, 100, 50), size=(100, 100), fmt="JPEG"):
 @pytest.fixture
 def auth_headers(client):
     client.post("/auth/register", json={
-        "name": "이미지테스트유저", "email": "imgtest@example.com", "password": "pass123"
+        "name": "이미지테스트유저", "email": "imgtest@example.com", "password": "pass1234"
     })
-    res = client.post("/auth/login", json={"email": "imgtest@example.com", "password": "pass123"})
+    res = client.post("/auth/login", json={"email": "imgtest@example.com", "password": "pass1234"})
     token = res.json()["access_token"]
     return {"Authorization": f"Bearer {token}"}
 
@@ -120,3 +120,35 @@ def test_extract_recommendation_fields(client, auth_headers):
     assert "color_name" in rec
     assert "hex" in rec
     assert rec["hex"].startswith("#")
+
+
+def test_extract_empty_file(client, auth_headers):
+    response = client.post(
+        "/colors/extract",
+        files={"file": ("empty.jpg", b"", "image/jpeg")},
+        headers=auth_headers,
+    )
+    assert response.status_code == 422
+    assert "비어" in response.json()["detail"]
+
+
+def test_extract_invalid_image_data(client, auth_headers):
+    response = client.post(
+        "/colors/extract",
+        files={"file": ("fake.jpg", b"this is not a real image", "image/jpeg")},
+        headers=auth_headers,
+    )
+    assert response.status_code == 422
+    assert "유효하지 않은" in response.json()["detail"]
+
+
+def test_extract_dimension_exceeded(client, auth_headers):
+    # 압축은 잘 되지만(용량 작음) 해상도가 매우 큰 이미지 -> 디컴프레션 밤 방어 확인
+    data = make_image_bytes(color=(100, 100, 100), size=(9000, 9000))
+    response = client.post(
+        "/colors/extract",
+        files={"file": ("huge.jpg", data, "image/jpeg")},
+        headers=auth_headers,
+    )
+    assert response.status_code == 422
+    assert "해상도" in response.json()["detail"]

@@ -1,7 +1,7 @@
 import math
 import io
 from collections import Counter
-from PIL import Image
+from PIL import Image, UnidentifiedImageError
 
 
 # 32가지 팔레트 (seed.py와 동일)
@@ -162,12 +162,33 @@ def recommend_colors(input_hex: str, top_n: int = 5) -> list:
 
 ALLOWED_CONTENT_TYPES = {"image/jpeg", "image/png", "image/webp"}
 MAX_IMAGE_SIZE = 10 * 1024 * 1024  # 10MB
+MAX_IMAGE_DIMENSION = 8000  # px, 가로/세로 각각의 최대 허용치 (디컴프레션 밤 방어)
+
+
+class InvalidImageError(Exception):
+    """이미지가 비어 있거나 실제 이미지로 열 수 없을 때."""
+
+
+class ImageTooLargeError(Exception):
+    """이미지 해상도가 허용 범위를 초과할 때."""
 
 
 def extract_dominant_color(image_bytes: bytes) -> str:
     """이미지에서 가장 지배적인 색상을 hex로 추출."""
-    img = Image.open(io.BytesIO(image_bytes)).convert("RGB")
-    img = img.resize((100, 100))
+    if not image_bytes:
+        raise InvalidImageError("이미지 파일이 비어 있습니다.")
+
+    try:
+        img = Image.open(io.BytesIO(image_bytes))
+    except UnidentifiedImageError:
+        raise InvalidImageError("유효하지 않은 이미지 파일입니다.")
+
+    if img.width > MAX_IMAGE_DIMENSION or img.height > MAX_IMAGE_DIMENSION:
+        raise ImageTooLargeError(
+            f"이미지 해상도는 {MAX_IMAGE_DIMENSION}x{MAX_IMAGE_DIMENSION}px를 초과할 수 없습니다."
+        )
+
+    img = img.convert("RGB").resize((100, 100))
 
     raw = img.tobytes()
     pixels = [(raw[i], raw[i+1], raw[i+2]) for i in range(0, len(raw), 3)]

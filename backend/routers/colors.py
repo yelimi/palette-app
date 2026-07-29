@@ -5,6 +5,8 @@ from color_utils import (
     extract_dominant_color,
     ALLOWED_CONTENT_TYPES,
     MAX_IMAGE_SIZE,
+    InvalidImageError,
+    ImageTooLargeError,
 )
 import schemas
 import models
@@ -27,8 +29,10 @@ async def extract_color(
 
     try:
         extracted_hex = extract_dominant_color(contents)
-    except Exception:
-        raise HTTPException(status_code=422, detail="이미지를 처리할 수 없습니다.")
+    except InvalidImageError as e:
+        raise HTTPException(status_code=422, detail=str(e))
+    except ImageTooLargeError as e:
+        raise HTTPException(status_code=422, detail=str(e))
 
     recommendations = recommend_colors(extracted_hex)
 
