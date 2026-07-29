@@ -12,10 +12,10 @@ def test_register_success(client):
 
 def test_register_duplicate_email(client):
     client.post("/auth/register", json={
-        "name": "유저1", "email": "dup@example.com", "password": "pass123"
+        "name": "유저A", "email": "dup@example.com", "password": "pass1234"
     })
     response = client.post("/auth/register", json={
-        "name": "유저2", "email": "dup@example.com", "password": "pass456"
+        "name": "유저B", "email": "dup@example.com", "password": "pass4567"
     })
     assert response.status_code == 409
 
@@ -35,7 +35,7 @@ def test_login_success(client):
 
 def test_login_wrong_password(client):
     client.post("/auth/register", json={
-        "name": "유저", "email": "wrongpw@example.com", "password": "correct"
+        "name": "유저", "email": "wrongpw@example.com", "password": "correct1"
     })
     response = client.post("/auth/login", json={
         "email": "wrongpw@example.com", "password": "wrong"
@@ -52,10 +52,10 @@ def test_login_nonexistent_user(client):
 
 def test_logout_success(client):
     client.post("/auth/register", json={
-        "name": "로그아웃유저", "email": "logout@example.com", "password": "pass123"
+        "name": "로그아웃유저", "email": "logout@example.com", "password": "pass1234"
     })
     token = client.post("/auth/login", json={
-        "email": "logout@example.com", "password": "pass123"
+        "email": "logout@example.com", "password": "pass1234"
     }).json()["access_token"]
     headers = {"Authorization": f"Bearer {token}"}
 
@@ -70,10 +70,10 @@ def test_logout_requires_auth(client):
 
 def test_token_invalid_after_logout(client):
     client.post("/auth/register", json={
-        "name": "만료유저", "email": "expired@example.com", "password": "pass123"
+        "name": "만료유저", "email": "expired@example.com", "password": "pass1234"
     })
     token = client.post("/auth/login", json={
-        "email": "expired@example.com", "password": "pass123"
+        "email": "expired@example.com", "password": "pass1234"
     }).json()["access_token"]
     headers = {"Authorization": f"Bearer {token}"}
 
@@ -103,7 +103,7 @@ def test_change_password_success(client):
 
 def test_change_password_wrong_current(client):
     client.post("/auth/register", json={
-        "name": "변경유저2", "email": "change2@example.com", "password": "correct123"
+        "name": "변경유저비", "email": "change2@example.com", "password": "correct123"
     })
     token = client.post("/auth/login", json={
         "email": "change2@example.com", "password": "correct123"

@@ -4,9 +4,9 @@ import pytest
 @pytest.fixture
 def auth_headers(client):
     client.post("/auth/register", json={
-        "name": "상품테스트유저", "email": "prod@example.com", "password": "pass123"
+        "name": "상품테스트유저", "email": "prod@example.com", "password": "pass1234"
     })
-    res = client.post("/auth/login", json={"email": "prod@example.com", "password": "pass123"})
+    res = client.post("/auth/login", json={"email": "prod@example.com", "password": "pass1234"})
     token = res.json()["access_token"]
     return {"Authorization": f"Bearer {token}"}
 

@@ -4,9 +4,9 @@ import pytest
 @pytest.fixture
 def auth_headers(client):
     client.post("/auth/register", json={
-        "name": "장바구니유저", "email": "cart@example.com", "password": "pass123"
+        "name": "장바구니유저", "email": "cart@example.com", "password": "pass1234"
     })
-    res = client.post("/auth/login", json={"email": "cart@example.com", "password": "pass123"})
+    res = client.post("/auth/login", json={"email": "cart@example.com", "password": "pass1234"})
     token = res.json()["access_token"]
     return {"Authorization": f"Bearer {token}"}
 
@@ -46,10 +46,10 @@ def test_delete_cart_item(client, auth_headers):
 
 
 def test_delete_other_users_cart_returns_404(client):
-    client.post("/auth/register", json={"name": "유저A", "email": "a@ex.com", "password": "pass"})
-    client.post("/auth/register", json={"name": "유저B", "email": "b@ex.com", "password": "pass"})
-    token_a = client.post("/auth/login", json={"email": "a@ex.com", "password": "pass"}).json()["access_token"]
-    token_b = client.post("/auth/login", json={"email": "b@ex.com", "password": "pass"}).json()["access_token"]
+    client.post("/auth/register", json={"name": "유저A", "email": "a@ex.com", "password": "pass1234"})
+    client.post("/auth/register", json={"name": "유저B", "email": "b@ex.com", "password": "pass1234"})
+    token_a = client.post("/auth/login", json={"email": "a@ex.com", "password": "pass1234"}).json()["access_token"]
+    token_b = client.post("/auth/login", json={"email": "b@ex.com", "password": "pass1234"}).json()["access_token"]
     add_res = client.post("/cart", json={"product_id": 1}, headers={"Authorization": f"Bearer {token_a}"})
     cart_id = add_res.json()["id"]
     del_res = client.delete(f"/cart/{cart_id}", headers={"Authorization": f"Bearer {token_b}"})
