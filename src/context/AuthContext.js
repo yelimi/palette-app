@@ -11,7 +11,12 @@ export function AuthProvider({ children }) {
   const [isReady, setIsReady] = useState(false);
 
   const logout = useCallback(async () => {
-    await SecureStore.deleteItemAsync(TOKEN_KEY);
+    try {
+      await SecureStore.deleteItemAsync(TOKEN_KEY);
+    } catch (err) {
+      // SecureStore가 지원되지 않는 환경(web)에서 에러 무시
+      console.warn('Failed to delete token from SecureStore:', err);
+    }
     setAuthToken(null);
     setToken(null);
   }, []);
@@ -22,17 +27,29 @@ export function AuthProvider({ children }) {
 
   useEffect(() => {
     (async () => {
-      const stored = await SecureStore.getItemAsync(TOKEN_KEY);
-      if (stored) {
-        setAuthToken(stored);
-        setToken(stored);
+      try {
+        const stored = await SecureStore.getItemAsync(TOKEN_KEY);
+        if (stored) {
+          setAuthToken(stored);
+          setToken(stored);
+        }
+      } catch (err) {
+        // SecureStore가 지원되지 않는 환경(web)에서 에러 무시
+        console.warn('Failed to load token from SecureStore:', err);
+      } finally {
+        // 어떤 경우든 초기화 완료로 표시
+        setIsReady(true);
       }
-      setIsReady(true);
     })();
   }, []);
 
   const login = useCallback(async (newToken) => {
-    await SecureStore.setItemAsync(TOKEN_KEY, newToken);
+    try {
+      await SecureStore.setItemAsync(TOKEN_KEY, newToken);
+    } catch (err) {
+      // SecureStore가 지원되지 않는 환경(web)에서 에러 무시
+      console.warn('Failed to save token to SecureStore:', err);
+    }
     setAuthToken(newToken);
     setToken(newToken);
   }, []);
