@@ -152,3 +152,16 @@ def test_extract_dimension_exceeded(client, auth_headers):
     )
     assert response.status_code == 422
     assert "해상도" in response.json()["detail"]
+
+
+def test_extract_truncated_image(client, auth_headers):
+    # 헤더는 정상이지만 데이터가 중간에 잘린 진짜 이미지 -> 500이 아니라 422여야 함
+    full_data = make_image_bytes(color=(100, 150, 200), size=(200, 200))
+    truncated_data = full_data[: len(full_data) // 2]
+    response = client.post(
+        "/colors/extract",
+        files={"file": ("truncated.jpg", truncated_data, "image/jpeg")},
+        headers=auth_headers,
+    )
+    assert response.status_code == 422
+    assert "손상" in response.json()["detail"]

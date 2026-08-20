@@ -188,7 +188,10 @@ def extract_dominant_color(image_bytes: bytes) -> str:
             f"이미지 해상도는 {MAX_IMAGE_DIMENSION}x{MAX_IMAGE_DIMENSION}px를 초과할 수 없습니다."
         )
 
-    img = img.convert("RGB").resize((100, 100))
+    try:
+        img = img.convert("RGB").resize((100, 100))
+    except OSError:
+        raise InvalidImageError("이미지 파일이 손상되었습니다.")
 
     raw = img.tobytes()
     pixels = [(raw[i], raw[i+1], raw[i+2]) for i in range(0, len(raw), 3)]
