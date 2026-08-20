@@ -28,13 +28,20 @@ export default function HomeScreen() {
     setSections([]);
     try {
       const result = await extractColor(asset);
-      const withProducts = await Promise.all(
+      const settled = await Promise.allSettled(
         result.recommendations.map(async (rec) => {
           const productPage = await getProductsByColor(rec.hex);
           return { ...rec, products: productPage.items };
         })
       );
+      const withProducts = settled
+        .filter((r) => r.status === 'fulfilled')
+        .map((r) => r.value);
+      const failedCount = settled.length - withProducts.length;
       setSections(withProducts);
+      if (failedCount > 0 && withProducts.length === 0) {
+        Alert.alert('오류', '상품을 불러오지 못했습니다. 다시 시도해주세요.');
+      }
     } catch (err) {
       const message = err instanceof ApiError ? err.message : '이미지 처리 중 오류가 발생했습니다.';
       Alert.alert('오류', message);
