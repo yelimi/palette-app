@@ -14,7 +14,10 @@ export default function ProductDetailScreen() {
   useEffect(() => {
     getProduct(id)
       .then(setProduct)
-      .catch(() => Alert.alert('오류', '상품 정보를 불러오지 못했습니다.'))
+      .catch((err) => {
+        const message = err instanceof ApiError ? err.message : '상품 정보를 불러오지 못했습니다.';
+        Alert.alert('오류', message);
+      })
       .finally(() => setLoading(false));
   }, [id]);
 
