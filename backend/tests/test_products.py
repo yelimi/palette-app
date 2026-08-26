@@ -69,6 +69,13 @@ def test_products_filter_by_gender(client, auth_headers):
     assert all(p["gender"] == "남성" for p in data["items"])
 
 
+def test_products_filter_by_gender_unisex(client, auth_headers):
+    response = client.get("/products?gender=공용&limit=100", headers=auth_headers)
+    data = response.json()
+    assert data["total"] > 0
+    assert all(p["gender"] == "공용" for p in data["items"])
+
+
 def test_products_filter_by_category(client, auth_headers):
     response = client.get("/products?category=상의&limit=100", headers=auth_headers)
     data = response.json()
