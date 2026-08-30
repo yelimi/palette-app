@@ -2,6 +2,7 @@ import { useCallback, useState } from 'react';
 import { View, Text, FlatList, Pressable, StyleSheet, Button, Alert } from 'react-native';
 import { useFocusEffect, useRouter } from 'expo-router';
 import { getCart, removeFromCart } from '../../src/api/cart';
+import { ApiError } from '../../src/api/client';
 import { useAuth } from '../../src/context/AuthContext';
 
 export default function CartScreen() {
@@ -13,7 +14,10 @@ export default function CartScreen() {
     useCallback(() => {
       getCart()
         .then(setItems)
-        .catch(() => Alert.alert('오류', '장바구니를 불러오지 못했습니다.'));
+        .catch((err) => {
+          const message = err instanceof ApiError ? err.message : '장바구니를 불러오지 못했습니다.';
+          Alert.alert('오류', message);
+        });
     }, [])
   );
 
@@ -21,8 +25,9 @@ export default function CartScreen() {
     try {
       await removeFromCart(cartId);
       setItems((prev) => prev.filter((item) => item.id !== cartId));
-    } catch {
-      Alert.alert('오류', '삭제에 실패했습니다.');
+    } catch (err) {
+      const message = err instanceof ApiError ? err.message : '삭제에 실패했습니다.';
+      Alert.alert('오류', message);
     }
   };
 
