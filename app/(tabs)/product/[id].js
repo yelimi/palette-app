@@ -12,9 +12,12 @@ export default function ProductDetailScreen() {
   const [adding, setAdding] = useState(false);
 
   useEffect(() => {
+    setLoading(true);
+    setProduct(null);
     getProduct(id)
       .then(setProduct)
       .catch((err) => {
+        if (err instanceof ApiError && err.handled) return;
         const message = err instanceof ApiError ? err.message : '상품 정보를 불러오지 못했습니다.';
         Alert.alert('오류', message);
       })
@@ -27,6 +30,7 @@ export default function ProductDetailScreen() {
       await addToCart(Number(id));
       Alert.alert('완료', '장바구니에 담았습니다.');
     } catch (err) {
+      if (err instanceof ApiError && err.handled) return;
       const message = err instanceof ApiError ? err.message : '장바구니 담기에 실패했습니다.';
       Alert.alert('오류', message);
     } finally {

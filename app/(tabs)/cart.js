@@ -15,6 +15,7 @@ export default function CartScreen() {
       getCart()
         .then(setItems)
         .catch((err) => {
+          if (err instanceof ApiError && err.handled) return;
           const message = err instanceof ApiError ? err.message : '장바구니를 불러오지 못했습니다.';
           Alert.alert('오류', message);
         });
@@ -26,6 +27,7 @@ export default function CartScreen() {
       await removeFromCart(cartId);
       setItems((prev) => prev.filter((item) => item.id !== cartId));
     } catch (err) {
+      if (err instanceof ApiError && err.handled) return;
       const message = err instanceof ApiError ? err.message : '삭제에 실패했습니다.';
       Alert.alert('오류', message);
     }

@@ -19,6 +19,7 @@ export default function RegisterScreen() {
       const result = await login(email, password);
       await setAuthenticated(result.access_token);
     } catch (err) {
+      if (err instanceof ApiError && err.handled) return;
       const message = err instanceof ApiError ? err.message : '회원가입에 실패했습니다.';
       Alert.alert('회원가입 실패', message);
     } finally {

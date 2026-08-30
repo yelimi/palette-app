@@ -65,10 +65,13 @@ export async function apiFetch(path, options = {}) {
   const data = await response.json().catch(() => null);
 
   if (!response.ok) {
-    if (response.status === 401 && onUnauthorized) {
+    const handled = response.status === 401 && Boolean(onUnauthorized);
+    if (handled) {
       onUnauthorized();
     }
-    throw new ApiError(response.status, data);
+    const err = new ApiError(response.status, data);
+    err.handled = handled;
+    throw err;
   }
 
   return data;

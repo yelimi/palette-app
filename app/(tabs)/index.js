@@ -43,6 +43,7 @@ export default function HomeScreen() {
         Alert.alert('오류', '상품을 불러오지 못했습니다. 다시 시도해주세요.');
       }
     } catch (err) {
+      if (err instanceof ApiError && err.handled) return;
       const message = err instanceof ApiError ? err.message : '이미지 처리 중 오류가 발생했습니다.';
       Alert.alert('오류', message);
     } finally {

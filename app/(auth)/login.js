@@ -17,6 +17,7 @@ export default function LoginScreen() {
       const result = await login(email, password);
       await setAuthenticated(result.access_token);
     } catch (err) {
+      if (err instanceof ApiError && err.handled) return;
       const message = err instanceof ApiError ? err.message : '로그인에 실패했습니다.';
       Alert.alert('로그인 실패', message);
     } finally {
