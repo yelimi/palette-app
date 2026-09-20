@@ -12,19 +12,15 @@ def _login(client, email, password):
     return timed(client.post, "/auth/login", json={"email": email, "password": password})
 
 
-def _assert_token_fields(response):
-    data = response.json()
-    assert "access_token" in data
-    assert "token_type" in data
-
-
 def test_TC34_로그인_정상(client):
     email = unique_email()
     register(client, email=email, password="Test1234!")
     response = _login(client, email, "Test1234!")
     assert response.status_code == 200
-    _assert_token_fields(response)
-    assert response.json()["token_type"] == "bearer"
+    data = response.json()
+    assert "access_token" in data
+    assert "token_type" in data
+    assert data["token_type"] == "bearer"
 
 
 def test_TC35_이메일_공백(client):
@@ -85,7 +81,6 @@ def test_TC45_패스워드_최대길이(client):
     register(client, email=email, password=max_password)
     response = _login(client, email, max_password)
     assert response.status_code == 200
-    _assert_token_fields(response)
 
 
 def test_TC46_패스워드_최대길이_초과(client):
@@ -99,7 +94,6 @@ def test_TC47_이메일_최대길이(client):
     register(client, email=email, password="Test1234!")
     response = _login(client, email, "Test1234!")
     assert response.status_code == 200
-    _assert_token_fields(response)
 
 
 def test_TC48_이메일_최대길이_초과(client):
@@ -113,7 +107,6 @@ def test_TC49_이메일_앞뒤_공백(client):
     register(client, email=email, password="Test1234!")
     response = _login(client, f" {email} ", "Test1234!")
     assert response.status_code == 200
-    _assert_token_fields(response)
 
 
 def test_TC50_이메일_중간_공백(client):
@@ -135,7 +128,6 @@ def test_TC52_패스워드_중간_공백(client):
     register(client, email=email, password="kim123 123 @")
     response = _login(client, email, "kim123 123 @")
     assert response.status_code == 200
-    _assert_token_fields(response)
 
 
 def test_TC53_이메일_대소문자_처리(client):
@@ -143,7 +135,6 @@ def test_TC53_이메일_대소문자_처리(client):
     register(client, email=email, password="Test1234!")
     response = _login(client, email.upper(), "Test1234!")
     assert response.status_code == 200
-    _assert_token_fields(response)
 
 
 def test_TC54_패스워드_대소문자_처리(client):

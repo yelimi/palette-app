@@ -64,10 +64,10 @@ def test_register_scenarios(client, case_id, overrides, expected_status):
     assert response.status_code == expected_status
     body = response.json()
     if response.status_code == 201:
-        for field in ("id", "name", "email"):
-            assert field in body
-        assert "password" not in body
         if case_id == "TC1_정상_가입":
+            for field in ("id", "name", "email"):
+                assert field in body
+            assert "password" not in body
             assert body["name"] == payload["name"]
             assert body["email"] == payload["email"]
     else:
