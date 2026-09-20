@@ -2,7 +2,7 @@ import uuid
 
 import pytest
 
-from .helpers import OMIT, build_payload, unique_email
+from .helpers import OMIT, assert_error_detail, build_payload, timed, unique_email
 
 
 def _max_length_local_part(total_len=64):
@@ -59,33 +59,44 @@ REGISTER_CASES = [
     ids=[c[0] for c in REGISTER_CASES],
 )
 def test_register_scenarios(client, case_id, overrides, expected_status):
-    response = client.post("/auth/register", json=_payload(**overrides))
+    payload = _payload(**overrides)
+    response = timed(client.post, "/auth/register", json=payload)
     assert response.status_code == expected_status
+    body = response.json()
     if response.status_code == 201:
-        assert "password" not in response.json()
+        for field in ("id", "name", "email"):
+            assert field in body
+        assert "password" not in body
+        if case_id == "TC1_정상_가입":
+            assert body["name"] == payload["name"]
+            assert body["email"] == payload["email"]
+    else:
+        assert_error_detail(response)
 
 
 def test_TC16_이메일_중복(client):
     email = unique_email()
-    first = client.post("/auth/register", json=_payload(email=email))
+    first = timed(client.post, "/auth/register", json=_payload(email=email))
     assert first.status_code == 201
 
-    second = client.post("/auth/register", json=_payload(email=email, name="다른유저"))
+    second = timed(client.post, "/auth/register", json=_payload(email=email, name="다른유저"))
     assert second.status_code == 409
+    assert_error_detail(second)
 
 
 def test_TC24_이름_중복(client):
-    first = client.post("/auth/register", json=_payload(name="홍동아"))
+    first = timed(client.post, "/auth/register", json=_payload(name="홍동아"))
     assert first.status_code == 201
 
-    second = client.post("/auth/register", json=_payload(name="홍동아"))
+    second = timed(client.post, "/auth/register", json=_payload(name="홍동아"))
     assert second.status_code == 201
 
 
 def test_TC31_이메일_대소문자_처리(client):
     email = unique_email()
-    first = client.post("/auth/register", json=_payload(email=email))
+    first = timed(client.post, "/auth/register", json=_payload(email=email))
     assert first.status_code == 201
 
-    second = client.post("/auth/register", json=_payload(email=email.upper(), name="다른유저"))
+    second = timed(client.post, "/auth/register", json=_payload(email=email.upper(), name="다른유저"))
     assert second.status_code == 409
+    assert_error_detail(second)

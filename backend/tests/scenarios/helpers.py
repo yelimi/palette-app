@@ -1,6 +1,19 @@
+import time
 import uuid
 
 OMIT = object()
+
+
+def timed(fn, *args, threshold_ms=500, **kwargs):
+    start = time.perf_counter()
+    response = fn(*args, **kwargs)
+    elapsed_ms = (time.perf_counter() - start) * 1000
+    assert elapsed_ms < threshold_ms, f"응답 시간 초과: {elapsed_ms:.1f}ms (기준 {threshold_ms}ms)"
+    return response
+
+
+def assert_error_detail(response):
+    assert "detail" in response.json()
 
 
 def unique_email(prefix="user"):
