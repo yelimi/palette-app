@@ -1,3 +1,5 @@
+import os
+
 import pytest
 from fastapi.testclient import TestClient
 from sqlalchemy import create_engine
@@ -5,7 +7,10 @@ from sqlalchemy.orm import sessionmaker
 from database import Base, get_db
 from main import app
 
-TEST_DB_URL = "postgresql://palette:palette123@localhost:5432/palette_test"
+TEST_DB_URL = os.environ.get(
+    "TEST_DATABASE_URL",
+    "postgresql://palette:palette123@localhost:5432/palette_test",
+)
 
 
 @pytest.fixture(scope="session")
