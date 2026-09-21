@@ -8,7 +8,7 @@ def _get(client, url, headers):
     return timed(client.get, url, headers=headers)
 
 
-def test_TC115_전체_필터_동작(client):
+def test_TC115_no_filter(client):
     headers = auth_header(client)
     response = _get(client, "/products", headers)
     assert response.status_code == 200
@@ -23,7 +23,7 @@ def test_TC115_전체_필터_동작(client):
             assert field in item
 
 
-def test_TC116_공용_필터_동작(client):
+def test_TC116_filter_gender_unisex(client):
     response = _get(client, "/products?gender=공용", auth_header(client))
     assert response.status_code == 200
     body = response.json()
@@ -31,7 +31,7 @@ def test_TC116_공용_필터_동작(client):
     assert all(p["gender"] == "공용" for p in body["items"])
 
 
-def test_TC117_남성_필터_동작(client):
+def test_TC117_filter_gender_male(client):
     response = _get(client, "/products?gender=남성&limit=100", auth_header(client))
     assert response.status_code == 200
     body = response.json()
@@ -39,7 +39,7 @@ def test_TC117_남성_필터_동작(client):
     assert all(p["gender"] == "남성" for p in body["items"])
 
 
-def test_TC118_여성_필터_동작(client):
+def test_TC118_filter_gender_female(client):
     response = _get(client, "/products?gender=여성&limit=50", auth_header(client))
     assert response.status_code == 200
     body = response.json()
@@ -47,7 +47,7 @@ def test_TC118_여성_필터_동작(client):
     assert all(p["gender"] == "여성" for p in body["items"])
 
 
-def test_TC119_카테고리_필터_동작(client):
+def test_TC119_filter_category(client):
     response = _get(client, "/products?category=상의&limit=100", auth_header(client))
     assert response.status_code == 200
     body = response.json()
@@ -55,7 +55,7 @@ def test_TC119_카테고리_필터_동작(client):
     assert all(p["category"] == "상의" for p in body["items"])
 
 
-def test_TC120_서브_카테고리_필터_동작(client):
+def test_TC120_filter_subcategory(client):
     response = _get(client, "/products?subcategory=셔츠/블라우스&limit=80", auth_header(client))
     assert response.status_code == 200
     body = response.json()
@@ -63,7 +63,7 @@ def test_TC120_서브_카테고리_필터_동작(client):
     assert all(p["subcategory"] == "셔츠/블라우스" for p in body["items"])
 
 
-def test_TC121_컬러_필터_동작(client):
+def test_TC121_sort_by_color(client):
     response = _get(client, "/products?color=1B2B4B&limit=40", auth_header(client))
     assert response.status_code == 200
     body = response.json()
@@ -71,7 +71,7 @@ def test_TC121_컬러_필터_동작(client):
     assert body["items"][0]["hex"].upper() == "#1B2B4B"
 
 
-def test_TC122_존재하지_않는_필터값(client):
+def test_TC122_filter_nonexistent_value(client):
     response = _get(client, "/products?gender=아동", auth_header(client))
     assert response.status_code == 200
     body = response.json()
@@ -79,7 +79,7 @@ def test_TC122_존재하지_않는_필터값(client):
     assert body["items"] == []
 
 
-def test_TC123_필터_조합_동작(client):
+def test_TC123_filter_combined_gender_category(client):
     headers = auth_header(client)
     response = _get(client, "/products?gender=여성&category=바지", headers)
     assert response.status_code == 200
@@ -90,7 +90,7 @@ def test_TC123_필터_조합_동작(client):
         assert p["category"] == "바지"
 
 
-def test_TC124_페이지네이션(client):
+def test_TC124_pagination(client):
     headers = auth_header(client)
     page1 = _get(client, "/products?page=1&limit=20", headers)
     page2 = _get(client, "/products?page=2&limit=20", headers)
@@ -105,7 +105,7 @@ def test_TC124_페이지네이션(client):
     assert ids1.isdisjoint(ids2)
 
 
-def test_TC125_페이지네이션_경계값(client):
+def test_TC125_pagination_out_of_range(client):
     response = _get(client, "/products?page=9999&limit=20", auth_header(client))
     assert response.status_code == 200
     body = response.json()
@@ -114,13 +114,13 @@ def test_TC125_페이지네이션_경계값(client):
     assert body["items"] == []
 
 
-def test_TC126_페이지네이션_최솟값_미만(client):
+def test_TC126_pagination_page_below_min(client):
     response = _get(client, "/products?page=0&limit=20", auth_header(client))
     assert response.status_code == 422
     assert_error_detail(response)
 
 
-def test_TC127_한_페이지_내_상품_조회(client):
+def test_TC127_pagination_custom_limit(client):
     response = _get(client, "/products?limit=5", auth_header(client))
     assert response.status_code == 200
     body = response.json()
@@ -128,31 +128,31 @@ def test_TC127_한_페이지_내_상품_조회(client):
     assert len(body["items"]) <= 5
 
 
-def test_TC128_한_페이지_내_상품_최댓값_초과(client):
+def test_TC128_pagination_limit_exceeds_max(client):
     response = _get(client, "/products?limit=101", auth_header(client))
     assert response.status_code == 422
     assert_error_detail(response)
 
 
-def test_TC129_한_페이지_내_상품_최솟값_미만(client):
+def test_TC129_pagination_limit_below_min(client):
     response = _get(client, "/products?limit=0", auth_header(client))
     assert response.status_code == 422
     assert_error_detail(response)
 
 
-def test_TC130_로그인_없이_조회(client):
+def test_TC130_list_without_login(client):
     response = timed(client.get, "/products")
     assert response.status_code == 403
     assert_error_detail(response)
 
 
-def test_TC131_유효하지_않은_토큰으로_조회(client):
+def test_TC131_list_invalid_token(client):
     response = _get(client, "/products", {"Authorization": "Bearer invalidtoken123"})
     assert response.status_code == 401
     assert_error_detail(response)
 
 
-def test_TC132_로그아웃된_토큰으로_조회(client):
+def test_TC132_list_logged_out_token(client):
     email = unique_email()
     register(client, email=email)
     token = login(client, email, "Test1234!").json()["access_token"]
@@ -163,7 +163,7 @@ def test_TC132_로그아웃된_토큰으로_조회(client):
     assert_error_detail(response)
 
 
-def test_TC133_존재하는_상품_조회(client):
+def test_TC133_get_product_success(client):
     headers = auth_header(client)
     first = _get(client, "/products?limit=1", headers).json()["items"][0]
     response = _get(client, f"/products/{first['id']}", headers)
@@ -174,31 +174,31 @@ def test_TC133_존재하는_상품_조회(client):
         assert field in body
 
 
-def test_TC134_존재하지_않는_상품_조회(client):
+def test_TC134_get_product_not_found(client):
     response = _get(client, "/products/99999999", auth_header(client))
     assert response.status_code == 404
     assert_error_detail(response)
 
 
-def test_TC135_product_id가_숫자가_아닌_경우(client):
+def test_TC135_product_id_non_numeric(client):
     response = _get(client, "/products/abc", auth_header(client))
     assert response.status_code == 422
     assert_error_detail(response)
 
 
-def test_TC136_로그인_없이_상품_id_조회(client):
+def test_TC136_get_product_without_login(client):
     response = timed(client.get, "/products/1")
     assert response.status_code == 403
     assert_error_detail(response)
 
 
-def test_TC137_유효하지_않은_토큰으로_상품_id_조회(client):
+def test_TC137_get_product_invalid_token(client):
     response = _get(client, "/products/1", {"Authorization": "Bearer invalidtoken123"})
     assert response.status_code == 401
     assert_error_detail(response)
 
 
-def test_TC138_로그아웃된_토큰으로_상품_id_조회(client):
+def test_TC138_get_product_logged_out_token(client):
     email = unique_email()
     register(client, email=email)
     token = login(client, email, "Test1234!").json()["access_token"]

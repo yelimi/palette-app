@@ -38,103 +38,103 @@ def _assert_extraction_success(response):
         assert HEX_RE.match(rec["hex"])
 
 
-def test_TC94_jpg_업로드(client):
+def test_TC94_upload_jpg(client):
     response = _upload(client, _headers(client), "ex_jpg.jpg", "image/jpeg")
     assert response.status_code == 200
     _assert_extraction_success(response)
 
 
-def test_TC95_png_업로드(client):
+def test_TC95_upload_png(client):
     response = _upload(client, _headers(client), "ex_png.png", "image/png")
     assert response.status_code == 200
     _assert_extraction_success(response)
 
 
-def test_TC96_webp_업로드(client):
+def test_TC96_upload_webp(client):
     response = _upload(client, _headers(client), "ex_wepb.webp", "image/webp")
     assert response.status_code == 200
     _assert_extraction_success(response)
 
 
-def test_TC97_heic_업로드(client):
+def test_TC97_upload_heic(client):
     response = _upload(client, _headers(client), "ex_heic.heic", "image/heic")
     assert response.status_code == 415
     assert_error_detail(response)
 
 
-def test_TC98_미지원_형식_업로드(client):
+def test_TC98_upload_unsupported_format(client):
     response = _upload(client, _headers(client), "ex_gif.gif", "image/gif")
     assert response.status_code == 415
     assert_error_detail(response)
 
 
-def test_TC99_이미지_누락(client):
+def test_TC99_image_missing(client):
     response = timed(client.post, "/colors/extract", headers=_headers(client))
     assert response.status_code == 422
     assert_error_detail(response)
 
 
-def test_TC100_빈_파일_업로드(client):
+def test_TC100_upload_empty_file(client):
     response = _upload(client, _headers(client), "empty.jpg", "image/jpeg")
     assert response.status_code == 422
     assert_error_detail(response)
 
 
-def test_TC101_매우_작은_이미지_업로드(client):
+def test_TC101_upload_tiny_image(client):
     response = _upload(client, _headers(client), "tiny_1x1.jpg", "image/jpeg")
     assert response.status_code == 200
     _assert_extraction_success(response)
 
 
-def test_TC102_크기_초과한_이미지_업로드(client):
+def test_TC102_upload_size_exceeded(client):
     response = _upload(client, _headers(client), "oversized.jpg", "image/jpeg", threshold_ms=5000)
     assert response.status_code == 413
     assert_error_detail(response)
 
 
-def test_TC103_손상된_이미지_업로드(client):
+def test_TC103_upload_corrupted_image(client):
     response = _upload(client, _headers(client), "corrupted.jpg", "image/jpeg", threshold_ms=5000)
     assert response.status_code == 422
     assert_error_detail(response)
 
 
-def test_TC104_이미지인_척하는_파일_업로드(client):
+def test_TC104_upload_fake_image_file(client):
     response = _upload(client, _headers(client), "fake_image.jpg", "image/jpeg", threshold_ms=5000)
     assert response.status_code == 422
     assert_error_detail(response)
 
 
-def test_TC105_해상도_초과_이미지_업로드(client):
+def test_TC105_upload_resolution_exceeded(client):
     response = _upload(client, _headers(client), "huge_resolution.jpg", "image/jpeg", threshold_ms=5000)
     assert response.status_code == 422
     assert_error_detail(response)
 
 
-def test_TC106_해상도_경계값_테스트(client):
+def test_TC106_upload_resolution_boundary(client):
     response = _upload(client, _headers(client), "boundary_8000.jpg", "image/jpeg", threshold_ms=1000)
     assert response.status_code == 200
     _assert_extraction_success(response)
 
 
-def test_TC107_매우_어두운_이미지_업로드(client):
+def test_TC107_upload_dark_image(client):
     response = _upload(client, _headers(client), "very_dark.jpg", "image/jpeg", threshold_ms=1000)
     assert response.status_code == 200
     _assert_extraction_success(response)
 
 
-def test_TC108_매우_밝은_이미지_업로드(client):
+def test_TC108_upload_bright_image(client):
     response = _upload(client, _headers(client), "very_bright.jpg", "image/jpeg", threshold_ms=1000)
     assert response.status_code == 200
     _assert_extraction_success(response)
 
 
-def test_TC109_여러_색상_섞인_이미지_업로드(client):
+def test_TC109_upload_multi_color_image(client):
     response = _upload(client, _headers(client), "multi_color.jpg", "image/jpeg", threshold_ms=1000)
     assert response.status_code == 200
     _assert_extraction_success(response)
 
 
-def test_TC110_로그인_없이_업로드(client):
+def test_TC110_upload_without_login(client):
     data = (FIXTURES / "ex_jpg.jpg").read_bytes()
     response = timed(
         client.post, "/colors/extract",
@@ -145,7 +145,7 @@ def test_TC110_로그인_없이_업로드(client):
     assert_error_detail(response)
 
 
-def test_TC111_유효하지_않은_토큰으로_업로드(client):
+def test_TC111_upload_invalid_token(client):
     data = (FIXTURES / "ex_png.png").read_bytes()
     response = timed(
         client.post, "/colors/extract",
@@ -157,7 +157,7 @@ def test_TC111_유효하지_않은_토큰으로_업로드(client):
     assert_error_detail(response)
 
 
-def test_TC112_로그아웃된_토큰으로_업로드(client):
+def test_TC112_upload_logged_out_token(client):
     headers = _headers(client)
     client.post("/auth/logout", headers=headers)
     response = _upload(client, headers, "ex_wepb.webp", "image/webp", threshold_ms=5000)
@@ -165,13 +165,13 @@ def test_TC112_로그아웃된_토큰으로_업로드(client):
     assert_error_detail(response)
 
 
-def test_TC113_Content_Type을_실제_파일과_다르게_설정(client):
+def test_TC113_upload_mismatched_content_type(client):
     response = _upload(client, _headers(client), "ex_png.png", "image/png", override_content_type="image/jpeg")
     assert response.status_code == 200
     _assert_extraction_success(response)
 
 
-def test_TC114_같은_이미지_반복_업로드(client):
+def test_TC114_upload_same_image_consistency(client):
     headers = _headers(client)
     first = _upload(client, headers, "ex_jpg.jpg", "image/jpeg")
     second = _upload(client, headers, "ex_jpg.jpg", "image/jpeg")
