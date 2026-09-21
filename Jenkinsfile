@@ -10,12 +10,13 @@ pipeline {
     stages {
         stage('Install') {
             steps {
-                sh 'pip install -r backend/requirements.txt'
+                sh 'python -m venv .venv'
+                sh '.venv/bin/pip install -r backend/requirements.txt'
             }
         }
         stage('Test') {
             steps {
-                sh 'cd backend && pytest tests/ --junitxml=report.xml'
+                sh 'cd backend && ../.venv/bin/pytest tests/ --junitxml=report.xml'
             }
         }
     }
