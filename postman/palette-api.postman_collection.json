@@ -19238,11 +19238,11 @@
 									"",
 									"// 상태 코드 확인",
 									"pm.test(\"상태 코드 확인\", function () {",
-									"    pm.expect(pm.response.code).to.equal(401);",
+									"    pm.expect(pm.response.code).to.equal(423);",
 									"});",
 									"",
 									"// log 출력",
-									"console.log(\"✅ 3차 로그인 실패!\");",
+									"console.log(\"✅ 3차 로그인 실패 - 계정 잠김(423)!\");",
 									"console.log(\"상태 코드:\", pm.response.code);",
 									"console.log(\"받은 데이터:\", body);"
 								],
