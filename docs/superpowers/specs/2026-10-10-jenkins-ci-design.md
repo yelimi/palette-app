@@ -5,7 +5,7 @@
 ## 1. 개요
 
 `feature/phase1-backend` 브랜치에 push가 발생할 때마다, 기존에 로컬 Docker로 띄워둔 Jenkins가
-자동으로 백엔드 pytest 테스트 스위트(53개)를 실행하도록 한다.
+자동으로 백엔드 pytest 테스트 스위트(164개)를 실행하도록 한다.
 
 **범위:** 백엔드(`backend/`) pytest 실행만. 모바일 앱 빌드는 범위 밖.
 **트리거 범위:** `feature/phase1-backend` 브랜치로의 push만. 다른 브랜치 push는 빌드를 트리거하지 않음.
@@ -40,7 +40,7 @@ Jenkins (Docker 컨테이너, 기존 것 재사용)
    │ "GitHub hook trigger for GITScm polling" → 이 브랜치에 실제 변경이
    │   있었는지 확인 후에만 빌드 시작 (다른 브랜치 push는 무시됨)
    ▼
-pytest 53개 테스트 실행 (컨테이너에 Python3 설치됨)
+pytest 164개 테스트 실행 (컨테이너에 Python3 설치됨)
    │
    ▼
 host.docker.internal:5432 → 호스트 PostgreSQL (palette_test DB)
@@ -131,6 +131,6 @@ pipeline {
 
 - [ ] `feature/phase1-backend`에 push하면 Jenkins가 1분 내로 빌드를 시작한다
 - [ ] 다른 브랜치(예: `feature/phase2-mobile-app`)에 push해도 이 Jenkins job은 빌드되지 않는다
-- [ ] pytest 53개 테스트가 Jenkins 빌드 안에서 전부 통과한다
+- [ ] pytest 164개 테스트가 Jenkins 빌드 안에서 전부 통과한다
 - [ ] 로컬에서 `cd backend && pytest tests/ -v`를 환경변수 없이 실행해도 기존처럼 정상 동작한다
       (conftest.py 변경이 로컬 워크플로우를 깨지 않았는지 확인)
