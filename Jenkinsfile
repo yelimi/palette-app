@@ -1,22 +1,22 @@
 pipeline {
-    agent {
-        docker {
-            image 'python:3.11'
-        }
-    }
+    agent any
     environment {
         TEST_DATABASE_URL = 'postgresql://palette:palette123@host.docker.internal:5432/palette_test'
     }
     stages {
         stage('Install') {
             steps {
-                sh 'python -m venv .venv'
-                sh '.venv/bin/pip install -r backend/requirements.txt'
+                dir('backend') {
+                    sh 'python3 -m venv venv'
+                    sh './venv/bin/pip install -r requirements.txt'
+                }
             }
         }
         stage('Test') {
             steps {
-                sh 'cd backend && ../.venv/bin/pytest tests/ --junitxml=report.xml'
+                dir('backend') {
+                    sh './venv/bin/pytest tests/ --junitxml=report.xml'
+                }
             }
         }
     }
