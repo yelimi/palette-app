@@ -1,5 +1,9 @@
 # Jenkins CI (백엔드 pytest 자동화) Implementation Plan
 
+> **경로 갱신 (2026-10-21):** 저장소 구조 개편(PR #4)에 맞춰 파일 경로와 문서 링크를 현재 구조 기준으로 고쳤다. 명령어의 `palette-app/`은 저장소를 clone한 폴더를 뜻한다.
+>
+> **이후 달라진 점:** 빌드 대상 브랜치는 `feature/phase1-backend`에서 `main`으로 바뀌었고(2026-10-20), Jenkins Job 이름은 `palette-app-api`다. 현재 `Jenkinsfile`은 루트에서 `./backend/venv/bin/pytest --junitxml=report.xml`로 실행하고 JUnit 리포트를 수집한다. 아래 Jenkinsfile 코드는 최초 작성 시점 버전이다.
+
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
 **Goal:** `feature/phase1-backend` 브랜치에 push가 발생할 때마다, 기존 Docker Jenkins가 자동으로 백엔드 pytest 164개를 실행하도록 한다.
@@ -8,12 +12,12 @@
 
 **Tech Stack:** Jenkins(Docker, 기존 컨테이너 `jenkins`), Python 3(컨테이너 내 신규 설치), pytest, ngrok, Jenkins REST API(Job 생성), GitHub webhook
 
-**참고 설계 문서:** `docs/superpowers/specs/2026-10-10-jenkins-ci-design.md`
+**참고 설계 문서:** `docs/specs/2026-10-10-jenkins-ci-design.md`
 
 ## Global Constraints
 
 - 트리거 범위: `feature/phase1-backend` 브랜치로의 push만. 다른 브랜치 push는 빌드를 트리거하지 않음
-- 로컬에서 환경변수 없이 `pytest tests/ -v` 실행 시 기존과 동일하게 동작해야 함 (conftest.py 변경이 기존 워크플로우를 깨면 안 됨)
+- 로컬에서 환경변수 없이 `pytest tests/api/ -v` 실행 시 기존과 동일하게 동작해야 함 (conftest.py 변경이 기존 워크플로우를 깨면 안 됨)
 - Jenkins 컨테이너 안의 Docker 소켓은 권한 거부 상태이므로 Docker-in-Docker 방식은 쓰지 않음 — 컨테이너에 Python을 직접 설치
 - Jenkins 컨테이너 안에서 `host.docker.internal`로 호스트 PostgreSQL(`localhost:5432`, DB `palette_test`, 계정 `palette`/`palette123`)에 접근
 - GitHub 저장소(`yelimi/palette-app`)는 public — 코드 체크아웃에 별도 인증 불필요
@@ -27,8 +31,8 @@
 ```
 palette-app/
 ├── Jenkinsfile                      # 신규 — Jenkins가 읽는 파이프라인 정의
-└── backend/
-    └── tests/
+└── tests/
+    └── api/
         └── conftest.py              # 수정 — TEST_DB_URL을 환경변수로 override 가능하게
 ```
 
@@ -37,7 +41,7 @@ palette-app/
 ## Task 1: conftest.py — 테스트 DB 주소 환경변수화
 
 **Files:**
-- Modify: `backend/tests/conftest.py:8`
+- Modify: `tests/api/conftest.py:8`
 
 **Interfaces:**
 - Produces: `TEST_DB_URL` — 환경변수 `TEST_DATABASE_URL`이 설정되어 있으면 그 값을, 없으면 기존 기본값(`postgresql://palette:palette123@localhost:5432/palette_test`)을 사용
@@ -45,16 +49,16 @@ palette-app/
 - [ ] **Step 1: 현재 동작 확인 (베이스라인)**
 
 ```bash
-cd /Users/jang-yelim/Desktop/palette-app/backend
-source venv/bin/activate
-pytest tests/ -v 2>&1 | tail -5
+cd palette-app
+source backend/venv/bin/activate
+pytest tests/api/ -v 2>&1 | tail -5
 ```
 
 Expected: `164 passed`
 
 - [ ] **Step 2: conftest.py 수정**
 
-`backend/tests/conftest.py`의 1~8번째 줄을 아래로 교체:
+`tests/api/conftest.py`의 1~8번째 줄을 아래로 교체:
 
 ```python
 import os
@@ -74,10 +78,10 @@ TEST_DB_URL = os.environ.get(
 - [ ] **Step 3: 환경변수 없이 실행해 기존과 동일하게 동작하는지 확인**
 
 ```bash
-cd /Users/jang-yelim/Desktop/palette-app/backend
-source venv/bin/activate
+cd palette-app
+source backend/venv/bin/activate
 unset TEST_DATABASE_URL
-pytest tests/ -v 2>&1 | tail -5
+pytest tests/api/ -v 2>&1 | tail -5
 ```
 
 Expected: `164 passed` (Step 1과 동일한 결과)
@@ -85,9 +89,9 @@ Expected: `164 passed` (Step 1과 동일한 결과)
 - [ ] **Step 4: 환경변수가 실제로 읽히는지 확인 (일부러 잘못된 주소로)**
 
 ```bash
-cd /Users/jang-yelim/Desktop/palette-app/backend
-source venv/bin/activate
-TEST_DATABASE_URL="postgresql://palette:palette123@nonexistent-host:5432/palette_test" pytest tests/test_auth.py -v 2>&1 | tail -15
+cd palette-app
+source backend/venv/bin/activate
+TEST_DATABASE_URL="postgresql://palette:palette123@nonexistent-host:5432/palette_test" pytest tests/api/test_auth.py -v 2>&1 | tail -15
 ```
 
 Expected: 연결 실패 에러(`could not translate host name "nonexistent-host"` 등) — 환경변수가 실제로 적용되고 있다는 증거. (Step 2의 코드가 없었다면 이 테스트는 여전히 `localhost`로 붙어서 통과했을 것임)
@@ -95,8 +99,8 @@ Expected: 연결 실패 에러(`could not translate host name "nonexistent-host"
 - [ ] **Step 5: Commit**
 
 ```bash
-cd /Users/jang-yelim/Desktop/palette-app
-git add backend/tests/conftest.py
+cd palette-app
+git add tests/api/conftest.py
 git commit -m "feat: 테스트 DB 주소를 환경변수로 override 가능하게 변경
 
 Jenkins 컨테이너 안에서는 localhost가 컨테이너 자신을 가리켜
@@ -117,7 +121,7 @@ override 가능하게 한다. 환경변수 없으면 기존 기본값 그대로 
 
 - [ ] **Step 1: Jenkinsfile 작성**
 
-`/Users/jang-yelim/Desktop/palette-app/Jenkinsfile`:
+`Jenkinsfile`:
 
 ```groovy
 pipeline {
@@ -149,7 +153,7 @@ pipeline {
 
 ```bash
 python3 -c "
-content = open('/Users/jang-yelim/Desktop/palette-app/Jenkinsfile').read()
+content = open('palette-app/Jenkinsfile').read()
 assert content.count('{') == content.count('}'), '중괄호 개수 불일치'
 print('중괄호 짝 맞음:', content.count('{'), '쌍')
 "
@@ -162,7 +166,7 @@ Expected: `중괄호 짝 맞음: 4 쌍`
 - [ ] **Step 3: Commit**
 
 ```bash
-cd /Users/jang-yelim/Desktop/palette-app
+cd palette-app
 git add Jenkinsfile
 git commit -m "feat: Jenkins Pipeline용 Jenkinsfile 추가
 
@@ -391,7 +395,7 @@ PREV_BUILD=$(curl -s -u "<JENKINS_USER>:<JENKINS_API_TOKEN>" \
   python3 -c "import sys,json; print(json.load(sys.stdin)['lastBuild']['number'])")
 echo "이전 빌드 번호: $PREV_BUILD"
 
-cd /Users/jang-yelim/Desktop/palette-app
+cd palette-app
 git commit --allow-empty -m "test: Jenkins webhook 동작 확인용 빈 커밋"
 git push origin feature/phase1-backend
 
@@ -417,7 +421,7 @@ PREV_BUILD=$(curl -s -u "<JENKINS_USER>:<JENKINS_API_TOKEN>" \
   python3 -c "import sys,json; print(json.load(sys.stdin)['lastBuild']['number'])")
 echo "이전 빌드 번호(Step 4 종료 시점과 동일해야 함): $PREV_BUILD"
 
-cd /Users/jang-yelim/Desktop/palette-app/.claude/worktrees/feature+phase2-mobile-app
+cd palette-app/.claude/worktrees/feature+phase2-mobile-app
 git commit --allow-empty -m "test: 다른 브랜치 push가 Jenkins를 트리거하지 않는지 확인용"
 git push origin feature/phase2-mobile-app
 
@@ -437,7 +441,7 @@ Expected: `이전`과 `60초 후` 번호가 **동일**(증가하지 않음) — 
 Step 4/5에서 만든 `--allow-empty` 커밋은 기록용으로 남겨도 무방하다. 지우고 싶으면:
 
 ```bash
-cd /Users/jang-yelim/Desktop/palette-app
+cd palette-app
 git log --oneline -3
 # 필요 시 git reset --hard로 직접 제거 여부는 사용자 판단
 ```
@@ -446,7 +450,7 @@ git log --oneline -3
 
 ## 완료 기준
 
-- [ ] `backend/tests/conftest.py` 변경 후에도 로컬 `pytest tests/ -v`가 환경변수 없이 164개 전부 통과
+- [ ] `tests/api/conftest.py` 변경 후에도 로컬 `pytest tests/api/ -v`가 환경변수 없이 164개 전부 통과
 - [ ] Jenkins 컨테이너에 Python3 설치 완료, `host.docker.internal:5432` TCP 연결 확인
 - [ ] Jenkins Job `palette-backend-ci`가 REST API로 생성되고 수동 빌드 시 `SUCCESS`
 - [ ] ngrok 터널 + GitHub webhook 등록 완료

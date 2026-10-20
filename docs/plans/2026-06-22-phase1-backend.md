@@ -1,5 +1,9 @@
 # Palette Backend (Phase 1) Implementation Plan
 
+> **경로 갱신 (2026-10-21):** 저장소 구조 개편(PR #4)에 맞춰 파일 경로와 문서 링크를 현재 구조 기준으로 고쳤다. 명령어의 `palette-app/`은 저장소를 clone한 폴더이며, pytest는 저장소 루트의 `pytest.ini`로 실행한다.
+>
+> **이후 달라진 점:** 이 계획의 `test_auth.py`, `test_products.py`, `test_cart.py`는 이후 시나리오 단위 테스트(`tests/api/`, 164개)로 재작성되었다.
+
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
 **Goal:** FastAPI + PostgreSQL REST API 서버 구축 — 인증(JWT), 상품 조회, 장바구니 CRUD 엔드포인트 제공
@@ -77,9 +81,9 @@ Expected: `palette-db` 컨테이너가 `Up` 상태
 - [ ] **Step 2: backend 디렉토리 생성 및 가상환경 설정**
 
 ```bash
-mkdir -p /Users/jang-yelim/palette-app/backend/routers
-mkdir -p /Users/jang-yelim/palette-app/backend/tests
-cd /Users/jang-yelim/palette-app/backend
+mkdir -p palette-app/backend/routers
+mkdir -p palette-app/tests/api
+cd palette-app/backend
 python3 -m venv venv
 source venv/bin/activate
 ```
@@ -132,8 +136,8 @@ def get_db():
 - [ ] **Step 5: DB 연결 확인 테스트**
 
 ```bash
-cd /Users/jang-yelim/palette-app/backend
-source venv/bin/activate
+cd palette-app
+source backend/venv/bin/activate
 python3 -c "from database import engine; conn = engine.connect(); print('DB 연결 성공'); conn.close()"
 ```
 
@@ -163,7 +167,7 @@ def health():
 - [ ] **Step 7: 서버 실행 확인**
 
 ```bash
-cd /Users/jang-yelim/palette-app/backend
+cd palette-app/backend
 source venv/bin/activate
 uvicorn main:app --reload --port 8000
 ```
@@ -179,13 +183,13 @@ Swagger UI 확인: http://localhost:8000/docs
 - [ ] **Step 8: routers/__init__.py 생성**
 
 ```bash
-touch /Users/jang-yelim/palette-app/backend/routers/__init__.py
+touch palette-app/backend/routers/__init__.py
 ```
 
 - [ ] **Step 9: Commit**
 
 ```bash
-cd /Users/jang-yelim/palette-app
+cd palette-app
 git add backend/
 git commit -m "feat: backend 초기 설정 - FastAPI + PostgreSQL 연결"
 ```
@@ -300,8 +304,8 @@ class CartItemResponse(BaseModel):
 - [ ] **Step 3: 테이블 생성 확인**
 
 ```bash
-cd /Users/jang-yelim/palette-app/backend
-source venv/bin/activate
+cd palette-app
+source backend/venv/bin/activate
 python3 -c "
 from database import engine, Base
 import models
@@ -355,7 +359,7 @@ if __name__ == "__main__":
 - [ ] **Step 5: 시드 데이터 삽입**
 
 ```bash
-cd /Users/jang-yelim/palette-app/backend
+cd palette-app/backend
 source venv/bin/activate
 python3 seed.py
 ```
@@ -365,7 +369,7 @@ Expected: `12개 상품 데이터 삽입 완료`
 - [ ] **Step 6: Commit**
 
 ```bash
-cd /Users/jang-yelim/palette-app
+cd palette-app
 git add backend/
 git commit -m "feat: DB 모델, 스키마, 시드 데이터 추가"
 ```
@@ -377,8 +381,8 @@ git commit -m "feat: DB 모델, 스키마, 시드 데이터 추가"
 **Files:**
 - Create: `backend/auth.py`
 - Create: `backend/routers/auth.py`
-- Create: `backend/tests/conftest.py`
-- Create: `backend/tests/test_auth.py`
+- Create: `tests/api/conftest.py`
+- Create: `tests/api/test_auth.py`
 - Modify: `backend/main.py`
 
 **Interfaces:**
@@ -391,7 +395,7 @@ git commit -m "feat: DB 모델, 스키마, 시드 데이터 추가"
 
 - [ ] **Step 1: 테스트 작성 (failing)**
 
-`backend/tests/conftest.py`:
+`tests/api/conftest.py`:
 ```python
 import pytest
 from fastapi.testclient import TestClient
@@ -438,7 +442,7 @@ def client(test_engine):
 docker exec -it palette-db psql -U palette -c "CREATE DATABASE palette_test;"
 ```
 
-`backend/tests/test_auth.py`:
+`tests/api/test_auth.py`:
 ```python
 def test_register_success(client):
     response = client.post("/auth/register", json={
@@ -491,9 +495,9 @@ def test_login_nonexistent_user(client):
 - [ ] **Step 2: 테스트 실행 (실패 확인)**
 
 ```bash
-cd /Users/jang-yelim/palette-app/backend
-source venv/bin/activate
-pytest tests/test_auth.py -v
+cd palette-app
+source backend/venv/bin/activate
+pytest tests/api/test_auth.py -v
 ```
 
 Expected: FAILED (라우터 없으므로 404)
@@ -608,7 +612,7 @@ def health():
 - [ ] **Step 6: 테스트 실행 (통과 확인)**
 
 ```bash
-pytest tests/test_auth.py -v
+pytest tests/api/test_auth.py -v
 ```
 
 Expected:
@@ -623,7 +627,7 @@ PASSED test_login_nonexistent_user
 - [ ] **Step 7: Commit**
 
 ```bash
-cd /Users/jang-yelim/palette-app
+cd palette-app
 git add backend/
 git commit -m "feat: 인증 엔드포인트 구현 (회원가입/로그인/JWT)"
 ```
@@ -635,7 +639,7 @@ git commit -m "feat: 인증 엔드포인트 구현 (회원가입/로그인/JWT)"
 **Files:**
 - Create: `backend/color_utils.py`
 - Create: `backend/routers/products.py`
-- Create: `backend/tests/test_products.py`
+- Create: `tests/api/test_products.py`
 - Modify: `backend/main.py`
 
 **Interfaces:**
@@ -646,7 +650,7 @@ git commit -m "feat: 인증 엔드포인트 구현 (회원가입/로그인/JWT)"
 
 - [ ] **Step 1: 테스트 작성 (failing)**
 
-`backend/tests/test_products.py`:
+`tests/api/test_products.py`:
 ```python
 import pytest
 
@@ -684,7 +688,7 @@ def test_products_no_color_param_returns_all(client, auth_headers):
 - [ ] **Step 2: 테스트 실행 (실패 확인)**
 
 ```bash
-pytest tests/test_products.py -v
+pytest tests/api/test_products.py -v
 ```
 
 Expected: FAILED (라우터 없으므로 404)
@@ -773,8 +777,8 @@ def health():
 - [ ] **Step 6: 테스트 DB에 시드 데이터 삽입**
 
 ```bash
-cd /Users/jang-yelim/palette-app/backend
-source venv/bin/activate
+cd palette-app
+source backend/venv/bin/activate
 python3 -c "
 import os
 os.environ['DATABASE_URL'] = 'postgresql://palette:palette123@localhost:5432/palette_test'
@@ -783,7 +787,7 @@ os.environ['DATABASE_URL'] = 'postgresql://palette:palette123@localhost:5432/pal
 
 conftest.py의 test_engine fixture가 테이블을 생성하지만 시드 데이터는 없으므로 conftest.py에 추가:
 
-`backend/tests/conftest.py` 끝에 추가:
+`tests/api/conftest.py` 끝에 추가:
 ```python
 @pytest.fixture(scope="session", autouse=True)
 def seed_products(test_engine):
@@ -805,7 +809,7 @@ def seed_products(test_engine):
 - [ ] **Step 7: 테스트 실행 (통과 확인)**
 
 ```bash
-pytest tests/test_products.py -v
+pytest tests/api/test_products.py -v
 ```
 
 Expected:
@@ -819,7 +823,7 @@ PASSED test_products_no_color_param_returns_all
 - [ ] **Step 8: Commit**
 
 ```bash
-cd /Users/jang-yelim/palette-app
+cd palette-app
 git add backend/
 git commit -m "feat: 상품 조회 엔드포인트 구현 (색상 거리 정렬)"
 ```
@@ -830,7 +834,7 @@ git commit -m "feat: 상품 조회 엔드포인트 구현 (색상 거리 정렬)
 
 **Files:**
 - Create: `backend/routers/cart.py`
-- Create: `backend/tests/test_cart.py`
+- Create: `tests/api/test_cart.py`
 - Modify: `backend/main.py`
 
 **Interfaces:**
@@ -842,7 +846,7 @@ git commit -m "feat: 상품 조회 엔드포인트 구현 (색상 거리 정렬)
 
 - [ ] **Step 1: 테스트 작성 (failing)**
 
-`backend/tests/test_cart.py`:
+`tests/api/test_cart.py`:
 ```python
 import pytest
 
@@ -898,7 +902,7 @@ def test_delete_other_users_cart_returns_404(client):
 - [ ] **Step 2: 테스트 실행 (실패 확인)**
 
 ```bash
-pytest tests/test_cart.py -v
+pytest tests/api/test_cart.py -v
 ```
 
 Expected: FAILED (라우터 없음)
@@ -982,9 +986,9 @@ def health():
 - [ ] **Step 5: 전체 테스트 실행 (통과 확인)**
 
 ```bash
-cd /Users/jang-yelim/palette-app/backend
-source venv/bin/activate
-pytest tests/ -v
+cd palette-app
+source backend/venv/bin/activate
+pytest tests/api/ -v
 ```
 
 Expected: 전체 테스트 PASSED
@@ -992,6 +996,7 @@ Expected: 전체 테스트 PASSED
 - [ ] **Step 6: 서버 실행 후 Swagger UI 확인**
 
 ```bash
+cd backend
 uvicorn main:app --reload --port 8000
 ```
 
@@ -1002,7 +1007,7 @@ uvicorn main:app --reload --port 8000
 - [ ] **Step 7: Commit**
 
 ```bash
-cd /Users/jang-yelim/palette-app
+cd palette-app
 git add backend/
 git commit -m "feat: 장바구니 CRUD 엔드포인트 구현"
 ```
@@ -1011,7 +1016,7 @@ git commit -m "feat: 장바구니 CRUD 엔드포인트 구현"
 
 ## 완료 기준 (Phase 1)
 
-- [ ] `pytest tests/ -v` 전체 통과
+- [ ] `pytest tests/api/ -v` 전체 통과
 - [ ] `uvicorn main:app` 실행 후 http://localhost:8000/docs 에서 모든 엔드포인트 확인 가능
 - [ ] Postman으로 수동 확인:
   - POST /auth/register → 201

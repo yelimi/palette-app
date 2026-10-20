@@ -1,5 +1,9 @@
 # Jenkins CI (백엔드 pytest 자동화) 설계 문서
 
+> **경로 갱신 (2026-10-21):** 저장소 구조 개편(PR #4)에 맞춰 파일 경로와 문서 링크를 현재 구조 기준으로 고쳤다.
+>
+> **이후 달라진 점:** 빌드 대상 브랜치는 `feature/phase1-backend`에서 `main`으로 바뀌었다(2026-10-20). 현재 `Jenkinsfile`은 루트에서 `./backend/venv/bin/pytest --junitxml=report.xml`로 실행하고 JUnit 리포트를 수집한다. 아래 Jenkinsfile 코드는 최초 설계 시점 버전이다.
+
 날짜: 2026-10-10
 
 ## 1. 개요
@@ -57,7 +61,7 @@ push는 빌드로 이어지지 않는다.
 - **빌드 트리거:** "GitHub hook trigger for GITScm polling" 체크
 - **Pipeline script:** 저장소 루트의 `Jenkinsfile` 사용 (Pipeline script from SCM)
 
-## 5. 코드 변경 — `backend/tests/conftest.py`
+## 5. 코드 변경 — `tests/api/conftest.py`
 
 현재 테스트 DB 주소가 하드코딩되어 있다 (`conftest.py:8`):
 ```python
@@ -132,5 +136,5 @@ pipeline {
 - [ ] `feature/phase1-backend`에 push하면 Jenkins가 1분 내로 빌드를 시작한다
 - [ ] 다른 브랜치(예: `feature/phase2-mobile-app`)에 push해도 이 Jenkins job은 빌드되지 않는다
 - [ ] pytest 164개 테스트가 Jenkins 빌드 안에서 전부 통과한다
-- [ ] 로컬에서 `cd backend && pytest tests/ -v`를 환경변수 없이 실행해도 기존처럼 정상 동작한다
+- [ ] 로컬 저장소 루트에서 환경변수 없이 `pytest`를 실행해도 기존처럼 정상 동작한다
       (conftest.py 변경이 로컬 워크플로우를 깨지 않았는지 확인)

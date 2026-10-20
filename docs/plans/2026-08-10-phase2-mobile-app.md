@@ -1,5 +1,7 @@
 # Phase 2: 모바일 앱 (React Native) Implementation Plan
 
+> **경로 갱신 (2026-10-21):** 저장소 구조 개편(PR #4)에 맞춰 파일 경로와 문서 링크를 현재 구조 기준으로 고쳤다. 앱 파일 경로(`app/`, `src/`, `app.json`, `package.json`)는 `mobile/` 폴더 기준이다.
+
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
 **Goal:** Expo Router 기반 React Native 앱 구축 — 로그인/회원가입, 홈(이미지 업로드 → 색상추천 → 상품 그리드), 상품 상세, 장바구니 화면을 완성된 FastAPI 백엔드에 연동한다.
@@ -8,7 +10,7 @@
 
 **Tech Stack:** Expo SDK ~56.0.12, Expo Router 56.2.17, React 19.2.3, React Native 0.85.3, expo-secure-store, expo-image-picker, expo-camera (프로젝트 자바스크립트, TypeScript 미사용 — 기존 `App.js`와 동일한 컨벤션)
 
-**참고 스펙:** `docs/superpowers/specs/2026-08-09-phase2-mobile-app-design.md`
+**참고 스펙:** `docs/specs/2026-08-09-phase2-mobile-app-design.md`
 
 ## Global Constraints
 
@@ -25,7 +27,7 @@
 ## 파일 구조
 
 ```
-palette-app/
+palette-app/mobile/
 ├── app.json                       # 수정: expo-router 플러그인/scheme/extra 추가
 ├── package.json                   # 수정: main을 expo-router/entry로 변경
 ├── App.js                         # 삭제
@@ -77,7 +79,7 @@ palette-app/
 - [ ] **Step 1: Expo Router 및 필수 패키지 설치**
 
 ```bash
-cd /Users/jang-yelim/Desktop/palette-app
+cd palette-app/mobile
 npx expo install expo-router expo-secure-store expo-constants expo-linking react-native-screens react-native-safe-area-context react-native-gesture-handler react-native-reanimated
 ```
 
@@ -131,7 +133,7 @@ Expected: `package.json`의 `dependencies`에 위 패키지들이 SDK 56과 호�
 - [ ] **Step 4: 기존 진입점 삭제**
 
 ```bash
-cd /Users/jang-yelim/Desktop/palette-app
+cd palette-app/mobile
 rm App.js index.js
 ```
 
@@ -252,7 +254,7 @@ export default function ProductDetailScreen() {
 - [ ] **Step 8: 실행 확인**
 
 ```bash
-cd /Users/jang-yelim/Desktop/palette-app
+cd palette-app/mobile
 npx expo start --web
 ```
 
@@ -261,7 +263,7 @@ Expected: 번들링 에러 없이 브라우저가 열리고 "홈" 텍스트가 �
 - [ ] **Step 9: Commit**
 
 ```bash
-cd /Users/jang-yelim/Desktop/palette-app
+cd palette-app/mobile
 git add app.json package.json package-lock.json App.js index.js app/
 git commit -m "feat: Expo Router 설치 및 라우트 뼈대 구성"
 ```
@@ -463,7 +465,7 @@ export default function RootLayout() {
 - [ ] **Step 4: 리다이렉트 동작 확인**
 
 ```bash
-cd /Users/jang-yelim/Desktop/palette-app
+cd palette-app/mobile
 npx expo start --web
 ```
 
@@ -472,7 +474,7 @@ Expected: 저장된 토큰이 없으므로 앱 진입 시 자동으로 `/login`�
 - [ ] **Step 5: Commit**
 
 ```bash
-cd /Users/jang-yelim/Desktop/palette-app
+cd palette-app/mobile
 git add src/api/client.js src/context/AuthContext.js app/_layout.js
 git commit -m "feat: API 클라이언트 및 인증 컨텍스트 추가, 로그인 상태 라우트 가드"
 ```
@@ -654,7 +656,7 @@ const styles = StyleSheet.create({
 - [ ] **Step 4: 백엔드 실행 후 동작 확인**
 
 ```bash
-cd /Users/jang-yelim/Desktop/palette-app/backend
+cd palette-app/backend
 source venv/bin/activate
 uvicorn main:app --reload --port 8000
 ```
@@ -662,7 +664,7 @@ uvicorn main:app --reload --port 8000
 새 터미널에서:
 
 ```bash
-cd /Users/jang-yelim/Desktop/palette-app
+cd palette-app/mobile
 npx expo start --web
 ```
 
@@ -676,7 +678,7 @@ Expected:
 - [ ] **Step 5: Commit**
 
 ```bash
-cd /Users/jang-yelim/Desktop/palette-app
+cd palette-app/mobile
 git add src/api/auth.js "app/(auth)/login.js" "app/(auth)/register.js"
 git commit -m "feat: 로그인/회원가입 화면 구현 및 API 연동"
 ```
@@ -866,7 +868,7 @@ const styles = StyleSheet.create({
 백엔드(`uvicorn main:app --reload --port 8000`)를 실행한 채로:
 
 ```bash
-cd /Users/jang-yelim/Desktop/palette-app
+cd palette-app/mobile
 npx expo start
 ```
 
@@ -879,7 +881,7 @@ Expo Go 앱(iOS/Android 실기기 또는 시뮬레이터)으로 접속해 로그
 - [ ] **Step 5: Commit**
 
 ```bash
-cd /Users/jang-yelim/Desktop/palette-app
+cd palette-app/mobile
 git add src/api/colors.js src/api/products.js "app/(tabs)/index.js"
 git commit -m "feat: 홈 화면 - 이미지 업로드 색상추천 및 상품 그리드 구현"
 ```
@@ -997,7 +999,7 @@ const styles = StyleSheet.create({
 - [ ] **Step 4: Commit**
 
 ```bash
-cd /Users/jang-yelim/Desktop/palette-app
+cd palette-app/mobile
 git add src/api/cart.js "app/(tabs)/product/[id].js"
 git commit -m "feat: 상품 상세 화면 및 장바구니 담기 구현"
 ```
@@ -1097,7 +1099,7 @@ const styles = StyleSheet.create({
 - [ ] **Step 3: Commit**
 
 ```bash
-cd /Users/jang-yelim/Desktop/palette-app
+cd palette-app/mobile
 git add "app/(tabs)/cart.js"
 git commit -m "feat: 장바구니 화면 및 로그아웃 구현"
 ```

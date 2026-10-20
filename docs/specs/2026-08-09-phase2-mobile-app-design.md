@@ -1,5 +1,9 @@
 # Phase 2: 모바일 앱 (React Native) 설계 문서
 
+> **경로 갱신 (2026-10-21):** 저장소 구조 개편(PR #4)에 맞춰 파일 경로와 문서 링크를 현재 구조 기준으로 고쳤다. 앱 파일 경로(`app/`)는 `mobile/` 폴더 기준이다.
+>
+> **이후 달라진 점:** 설계 단계에서는 TypeScript(`.tsx`, `api.ts`)를 가정했으나, 구현은 JavaScript(`.js`)로 했다 (구현 계획 `docs/plans/2026-08-10-phase2-mobile-app.md` 참고).
+
 날짜: 2026-08-09
 
 ## 1. 개요
@@ -12,8 +16,8 @@ React Native(Expo) 클라이언트 앱을 구현한다. 현재 `App.js`는 `crea
 장바구니. 전체 상품을 훑어보는 별도 목록/필터 화면(`GET /products` 페이징·필터)은
 Phase 2 범위에서 제외한다 (색상 추천 흐름에서만 상품에 접근).
 
-**참고 문서:** `docs/superpowers/plans/2026-06-22-phase1-backend.md`,
-`docs/superpowers/specs/2026-06-22-palette-qa-design.md`
+**참고 문서:** `docs/plans/2026-06-22-phase1-backend.md`,
+`docs/specs/2026-06-22-palette-qa-design.md`
 
 ---
 
