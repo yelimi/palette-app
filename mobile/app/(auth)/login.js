@@ -1,9 +1,12 @@
 import { useState } from 'react';
-import { View, Text, TextInput, Button, StyleSheet, Alert, Pressable } from 'react-native';
+import { View, Text, TextInput, StyleSheet, Alert, Pressable } from 'react-native';
 import { Link } from 'expo-router';
 import { login } from '../../src/api/auth';
 import { ApiError } from '../../src/api/client';
 import { useAuth } from '../../src/context/AuthContext';
+import Logo from '../../src/components/Logo';
+import AppButton from '../../src/components/AppButton';
+import { colors, radius } from '../../src/theme';
 
 export default function LoginScreen() {
   const { login: setAuthenticated } = useAuth();
@@ -27,9 +30,18 @@ export default function LoginScreen() {
 
   return (
     <View style={styles.container}>
+      <Link href="/" replace asChild>
+        <Pressable style={styles.back} hitSlop={8}>
+          <Text style={styles.backText}>← 둘러보기</Text>
+        </Pressable>
+      </Link>
+      <View style={styles.logo}>
+        <Logo size={32} />
+      </View>
       <Text style={styles.title}>로그인</Text>
       <TextInput
         style={styles.input}
+        placeholderTextColor="#A0A09B"
         placeholder="이메일"
         autoCapitalize="none"
         keyboardType="email-address"
@@ -38,15 +50,16 @@ export default function LoginScreen() {
       />
       <TextInput
         style={styles.input}
+        placeholderTextColor="#A0A09B"
         placeholder="비밀번호"
         secureTextEntry
         value={password}
         onChangeText={setPassword}
       />
-      <Button title={submitting ? '로그인 중...' : '로그인'} onPress={handleSubmit} disabled={submitting} />
+      <AppButton title={submitting ? '로그인 중...' : '로그인'} onPress={handleSubmit} disabled={submitting} style={styles.submit} />
       <Link href="/register" asChild>
         <Pressable style={styles.link}>
-          <Text>계정이 없으신가요? 회원가입</Text>
+          <Text style={styles.linkText}>계정이 없으신가요? 회원가입</Text>
         </Pressable>
       </Link>
     </View>
@@ -54,8 +67,21 @@ export default function LoginScreen() {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, justifyContent: 'center', padding: 24 },
-  title: { fontSize: 24, fontWeight: '700', marginBottom: 24, textAlign: 'center' },
-  input: { borderWidth: 1, borderColor: '#ccc', borderRadius: 8, padding: 12, marginBottom: 12 },
-  link: { marginTop: 16, alignItems: 'center' },
+  container: { flex: 1, justifyContent: 'center', padding: 24, backgroundColor: colors.background },
+  title: { fontSize: 24, fontWeight: '800', color: colors.text, marginBottom: 28, textAlign: 'center' },
+  input: {
+    height: 52,
+    backgroundColor: colors.surface,
+    borderRadius: radius.md,
+    paddingHorizontal: 16,
+    fontSize: 16,
+    color: colors.text,
+    marginBottom: 12,
+  },
+  submit: { marginTop: 8 },
+  link: { marginTop: 20, alignItems: 'center' },
+  linkText: { fontSize: 14, color: colors.subtext },
+  back: { position: 'absolute', top: 56, left: 24 },
+  backText: { fontSize: 15, color: colors.subtext, fontWeight: '600' },
+  logo: { marginBottom: 32 },
 });

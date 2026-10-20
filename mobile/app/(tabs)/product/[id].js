@@ -1,9 +1,11 @@
 import { useEffect, useState } from 'react';
-import { View, Text, Button, StyleSheet, ActivityIndicator, Alert } from 'react-native';
+import { View, Text, ScrollView, StyleSheet, ActivityIndicator, Alert } from 'react-native';
 import { useLocalSearchParams } from 'expo-router';
 import { getProduct } from '../../../src/api/products';
 import { addToCart } from '../../../src/api/cart';
 import { ApiError } from '../../../src/api/client';
+import AppButton from '../../../src/components/AppButton';
+import { colors, radius } from '../../../src/theme';
 
 export default function ProductDetailScreen() {
   const { id } = useLocalSearchParams();
@@ -43,26 +45,45 @@ export default function ProductDetailScreen() {
 
   return (
     <View style={styles.container}>
-      <View style={[styles.swatch, { backgroundColor: product.hex }]} />
-      <Text style={styles.name}>{product.name}</Text>
-      <Text>{product.color_name}</Text>
-      <Text>
-        {product.gender} · {product.category} · {product.subcategory}
-      </Text>
-      <Text style={styles.price}>{product.price.toLocaleString()}원</Text>
-      <Button
-        title={adding ? '담는 중...' : '장바구니 담기'}
-        onPress={handleAddToCart}
-        disabled={adding}
-      />
+      <ScrollView contentContainerStyle={styles.scroll}>
+        <View style={[styles.swatch, { backgroundColor: product.hex }]} />
+        <View style={styles.body}>
+          <Text style={styles.meta}>
+            {product.gender} · {product.category} · {product.subcategory}
+          </Text>
+          <Text style={styles.name}>{product.name}</Text>
+          <Text style={styles.price}>{product.price.toLocaleString()}원</Text>
+          <View style={styles.colorRow}>
+            <View style={[styles.colorDot, { backgroundColor: product.hex }]} />
+            <Text style={styles.colorText}>
+              {product.color_name} · {product.hex}
+            </Text>
+          </View>
+        </View>
+      </ScrollView>
+      <View style={styles.footer}>
+        <AppButton
+          title={adding ? '담는 중...' : '장바구니 담기'}
+          icon="bag-add-outline"
+          onPress={handleAddToCart}
+          disabled={adding}
+        />
+      </View>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, padding: 16 },
+  container: { flex: 1 },
   center: { flex: 1, justifyContent: 'center' },
-  swatch: { width: '100%', height: 160, borderRadius: 8, marginBottom: 16 },
-  name: { fontSize: 20, fontWeight: '700', marginBottom: 4 },
-  price: { fontSize: 18, fontWeight: '600', marginVertical: 12 },
+  scroll: { paddingBottom: 24 },
+  swatch: { height: 320 },
+  body: { padding: 20 },
+  meta: { fontSize: 13, color: colors.subtext },
+  name: { fontSize: 22, fontWeight: '800', color: colors.text, marginTop: 6 },
+  price: { fontSize: 22, fontWeight: '800', color: colors.text, marginTop: 12 },
+  colorRow: { flexDirection: 'row', alignItems: 'center', backgroundColor: colors.surface, borderRadius: radius.md, padding: 14, marginTop: 20 },
+  colorDot: { width: 22, height: 22, borderRadius: 11, marginRight: 10 },
+  colorText: { fontSize: 14, fontWeight: '600', color: colors.text },
+  footer: { padding: 20, borderTopWidth: 1, borderTopColor: colors.border },
 });
