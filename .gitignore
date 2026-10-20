@@ -44,3 +44,6 @@ yarn-error.*
 backend/venv/
 backend/__pycache__/
 *.pyc
+
+# Claude Code worktrees
+.claude/worktrees/
