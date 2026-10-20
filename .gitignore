@@ -45,8 +45,8 @@ backend/venv/
 backend/__pycache__/
 *.pyc
 
-# Claude Code worktrees
-.claude/worktrees/
+# Claude Code (로컬 설정)
+.claude/
 
 # pytest
 .pytest_cache/
