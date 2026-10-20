@@ -14,15 +14,13 @@ pipeline {
         }
         stage('Test') {
             steps {
-                dir('backend') {
-                    sh './venv/bin/pytest tests/ --junitxml=report.xml'
-                }
+                sh './backend/venv/bin/pytest --junitxml=report.xml'
             }
         }
     }
     post {
         always {
-            junit 'backend/report.xml'
+            junit 'report.xml'
         }
     }
 }

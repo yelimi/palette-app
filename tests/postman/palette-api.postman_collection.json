@@ -18493,7 +18493,7 @@
 									"key": "file",
 									"type": "file",
 									"uuid": "7b9c8e04-8bca-4ba9-b5cf-156dc8b01533",
-									"src": "/Users/jang-yelim/Desktop/palette-app/postman/fixtures/ex_jpg.jpg"
+									"src": "ex_jpg.jpg"
 								}
 							]
 						},

@@ -3,7 +3,7 @@ from pathlib import Path
 
 from .helpers import assert_error_detail, login, register, timed, unique_email
 
-FIXTURES = Path(__file__).resolve().parents[3] / "postman" / "fixtures"
+FIXTURES = Path(__file__).resolve().parents[1] / "postman" / "fixtures"
 HEX_RE = re.compile(r"^#[0-9A-Fa-f]{6}$")
 
 

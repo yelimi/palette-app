@@ -6,7 +6,7 @@
 
 | 테스트 | 도구 | 대상 | 케이스 | 상태 | 위치 |
 |--------|------|------|-------:|------|------|
-| API 테스트 | Postman, Newman, pytest | FastAPI REST API | 164 | ✅ 완료 | [`postman/`](postman/), [`backend/tests/`](backend/tests/) |
+| API 테스트 | Postman, Newman, pytest | FastAPI REST API | 164 | ✅ 완료 | [`tests/postman/`](tests/postman/), [`tests/api/`](tests/api/) |
 | 모바일 E2E 테스트 | Appium | React Native 앱 (iOS / Android) | - | 🚧 진행 중 | - |
 | 웹 E2E 테스트 | Selenium | 웹 앱 | - | 📋 예정 | - |
 | CI 자동화 | Jenkins (Docker) | 위 테스트 자동 실행 | - | 🚧 진행 중 | [`Jenkinsfile`](Jenkinsfile) |
@@ -131,7 +131,12 @@ API를 먼저 테스트해서 백엔드 동작을 검증하고, 그 위에서 �
 
 ```
 palette-app/
-├── postman/            # Postman 컬렉션, 환경 파일, 업로드 테스트용 이미지
-├── backend/tests/      # pytest API 테스트
+├── backend/            # 테스트 대상: FastAPI 서버
+├── mobile/             # 테스트 대상: Expo 모바일 앱
+├── tests/
+│   ├── api/            # pytest API 테스트
+│   └── postman/        # Postman 컬렉션, 환경 파일, 업로드 테스트용 이미지
+├── docs/               # 설계(specs), 구현 계획(plans) 문서
+├── pytest.ini          # pytest 설정 (루트에서 실행)
 └── Jenkinsfile         # CI 파이프라인
 ```

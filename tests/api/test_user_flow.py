@@ -2,7 +2,7 @@ from pathlib import Path
 
 from .helpers import login, register, unique_email
 
-FIXTURES = Path(__file__).resolve().parents[3] / "postman" / "fixtures"
+FIXTURES = Path(__file__).resolve().parents[1] / "postman" / "fixtures"
 
 
 def test_user_flow(client):
